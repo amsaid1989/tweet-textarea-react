@@ -89,6 +89,6 @@
 
 27) If we have a highlighted cashtag and we add word characters immediately before without any non-word characters separating them from the cashtag, then the cashtag won't be highlighted. For example, none of the `Hi$GOOGLE` text will be highlighted despite the fact that, on its own, the `$GOOGLE` part is valid as a cashtag. However, because it comes immediately after a sequence of word characters, it is not treated as a cashtag and, therefore, not highlighted.
 
-28) If we add a URL before a highlighted cashtag, then depending on the rules defined above in item number 25, the highlighting of the cashtag may be removed, or it may be highlighted as part of the URL.
+28) If we add a URL before a highlighted cashtag, then depending on the rules defined above (in item number 25), the highlighting of the cashtag may be removed, or it may be highlighted as part of the URL.
 
 29) The behaviors defined above work the same when pasting content into the editor.
