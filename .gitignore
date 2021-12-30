@@ -1,2 +1,4 @@
 .vscode
 .markdownlint.json
+dist
+node_modules
