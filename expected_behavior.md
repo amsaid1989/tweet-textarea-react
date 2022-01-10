@@ -1,12 +1,12 @@
 # Expected behavior
 
-1) Text that doesn't match any patterns shouldn't be highlighted.
+1) Each paragraph in the Twitter input is created using a new `<div>` element with each line becoming a span that includes other spans for the normal text and spans for the highlighted text. However, to simplify things, my version will create each paragraph using the `<p>` element, with the formatted text added as text content immediately into the element, while highlighted text is added inside a `<span>` element with styling.
 
-2) Each paragraph in the Twitter input is created using a new `<div>` element with each line becoming a span that includes other spans for the normal text and spans for the highlighted text. However, to simplify things, my version will create each paragraph using the `<p>` element, with the formatted text added as text content immediately into the element, while highlighted text is added inside a `<span>` element with styling.
+2) Empty paragraphs are allowed in the input area, so users can press the <kbd>Enter</kbd> key without having to type anything. If they start typing, the text will go into the last paragraph they added by pressing the <kbd>Enter</kbd> key, leaving the previous ones empty.
 
-3) Empty paragraphs are allowed in the input area, so users can press the <kbd>Enter</kbd> key without having to type anything. If they start typing, the text will go into the last paragraph they added by pressing the <kbd>Enter</kbd> key, leaving the previous ones empty.
+3) When the user presses the <kbd>Backspace</kbd> key in an empty paragraph, the paragraph is deleted and the cursor goes back to the previous paragraph. If it is the first paragraph in the editor, the paragraph is just deleted.
 
-4) When the user presses the <kbd>Backspace</kbd> key in an empty paragraph, the paragraph is deleted and the cursor goes back to the previous paragraph. If it is the first paragraph in the editor, the paragraph is just deleted.
+4) Text that doesn't match any patterns shouldn't be highlighted.
 
 5) The Twitter input area supports hashtags, user mentions and the less frequently used `cashtags` which are used to track stock symbols and share financial information.
     - The pattern for cashtags seems to be a `$` character followed by a minimum of 1 and a maximum of 6 alphabetical characters. No digits or non-word characters are allowed.
@@ -43,6 +43,8 @@
     - To be specific, if the word includes two `@` characters that are separated only by word characters, then it is not going to be highlighted. If you add another `@`, to a user mention that is already highlighted, then the highlighting will be removed.
 
 11) If we have a hashatg that is highlighted, then we add an `@` character immediately afterwards, the hashtag will continue to be highlighted, and the `@` character will be treated normally as a non-word character, which means that it, or any text that comes after it, won't be highlighted. (e.g. `#buildinpublic@amsaid1989`. `#buildinpublic` will be highlighted normally, but `@amsaid1989` won't).
+
+11) If we have a hashatg that is highlighted, then we add an `#` character immediately afterwards, the highlighting will be removed.
 
 12) If we have a user mention that is highlighted, then we add an `#` character immediately afterwards, the user mention will continue to be highlighted, and the `#` character will be treated normally as a non-word character, which means that it, or any text that comes after it, won't be highlighted. (e.g. `@amsaid1989#buildinpublic`. `@amsaid1989` will be highlighted normally, but `#buildinpublic` won't).
 
