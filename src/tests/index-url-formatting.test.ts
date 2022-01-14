@@ -204,7 +204,55 @@ test.describe("URLs", async () => {
     });
 
     test.describe("URL relationship to other entities", async () => {
-        test.describe("URL relationship to other URLs", async () => {});
+        test.describe("URL relationship to other URLs", async () => {
+            test("If we have two URLs, that don't include the protocol, sitting next to each other with nothing separating them, then they will be highlighted as 1 URL", async ({
+                page,
+            }) => {
+                const editor = page.locator("div#editor");
+
+                await editor.type("google.comtwitter.com");
+
+                const span = page.locator("span.highlight");
+                const html = await editor.innerHTML();
+
+                await expect(span).toBeVisible();
+                await expect(html).toBe(
+                    '<p><span class="highlight">google.comtwitter.com</span></p>'
+                );
+            });
+
+            test("If we have two URLs, with the first one including the protocol, sitting next to each other with nothing separating them, then they will be highlighted as 1 URL", async ({
+                page,
+            }) => {
+                const editor = page.locator("div#editor");
+
+                await editor.type("https://google.comtwitter.com");
+
+                const span = page.locator("span.highlight");
+                const html = await editor.innerHTML();
+
+                await expect(span).toBeVisible();
+                await expect(html).toBe(
+                    '<p><span class="highlight">https://google.comtwitter.com</span></p>'
+                );
+            });
+
+            test("If we have two URLs, with both including the protocol, sitting next to each other with nothing separating them, then none of them will be highlighted", async ({
+                page,
+            }) => {
+                const editor = page.locator("div#editor");
+
+                await editor.type("https://google.comhttps://twitter.com");
+
+                const span = page.locator("span.highlight");
+                const html = await editor.innerHTML();
+
+                await expect(span).toBeHidden();
+                await expect(html).toBe(
+                    "<p>https://google.comhttps://twitter.com</p>"
+                );
+            });
+        });
 
         test.describe("URL relationship to user mentinos", async () => {
             test("If a user mention comes immediately after the top level domain, then neither the URL nor the user mention will be highlighted", async ({
@@ -236,6 +284,90 @@ test.describe("URLs", async () => {
                     '<p><span class="highlight">hello.co</span>.uk@amsaid1989</p>'
                 );
             });
+
+            test("If we add the @ character before a highlighted URL that doesn't include the protocol, then the highlighting of the URL will be removed", async ({
+                page,
+            }) => {
+                const editor = page.locator("div#editor");
+
+                await editor.type("google.com");
+
+                for (let i = 0; i < 10; i++) {
+                    await editor.press("ArrowLeft");
+                }
+
+                await editor.type("@");
+
+                const span = page.locator("span.highlight");
+                const html = await editor.innerHTML();
+
+                await expect(span).toBeVisible();
+                await expect(html).toBe(
+                    '<p><span class="highlight">@google</span>.com</p>'
+                );
+            });
+
+            test("If we add a user mention before a highlighted URL that doesn't include the protocol, then the highlighting of the URL will be removed", async ({
+                page,
+            }) => {
+                const editor = page.locator("div#editor");
+
+                await editor.type("google.com");
+
+                for (let i = 0; i < 10; i++) {
+                    await editor.press("ArrowLeft");
+                }
+
+                await editor.type("@amsaid1989");
+
+                const span = page.locator("span.highlight");
+                const html = await editor.innerHTML();
+
+                await expect(span).toBeVisible();
+                await expect(html).toBe(
+                    '<p><span class="highlight">@amsaid1989google</span>.com</p>'
+                );
+            });
+
+            test("If we add the @ character before a highlighted URL that includes the protocol, then nothing will be highlighted", async ({
+                page,
+            }) => {
+                const editor = page.locator("div#editor");
+
+                await editor.type("https://google.com");
+
+                for (let i = 0; i < 18; i++) {
+                    await editor.press("ArrowLeft");
+                }
+
+                await editor.type("@");
+
+                const span = page.locator("span.highlight");
+                const html = await editor.innerHTML();
+
+                await expect(span).toBeHidden();
+                await expect(html).toBe("<p>@https://google.com</p>");
+            });
+
+            test("If we add a user mention before a highlighted URL that includes the protocol, then nothing will be highlighted", async ({
+                page,
+            }) => {
+                const editor = page.locator("div#editor");
+
+                await editor.type("https://google.com");
+
+                for (let i = 0; i < 18; i++) {
+                    await editor.press("ArrowLeft");
+                }
+
+                await editor.type("@amsaid1989");
+
+                const span = page.locator("span.highlight");
+                const html = await editor.innerHTML();
+
+                await expect(span).toBeHidden();
+                await expect(html).toBe("<p>@amsaid1989https://google.com</p>");
+            });
         });
 
         test.describe("URL relationship to hashtags", async () => {
@@ -254,6 +386,92 @@ test.describe("URLs", async () => {
                     '<p><span class="highlight">hello.com</span>#100DaysOfCode</p>'
                 );
             });
+
+            test("If we add the # character before a highlighted URL that doesn't include the protocol, then the highlighting of the URL will be removed", async ({
+                page,
+            }) => {
+                const editor = page.locator("div#editor");
+
+                await editor.type("google.com");
+
+                for (let i = 0; i < 10; i++) {
+                    await editor.press("ArrowLeft");
+                }
+
+                await editor.type("#");
+
+                const span = page.locator("span.highlight");
+                const html = await editor.innerHTML();
+
+                await expect(span).toBeVisible();
+                await expect(html).toBe(
+                    '<p><span class="highlight">#google</span>.com</p>'
+                );
+            });
+
+            test("If we add a hashtag before a highlighted URL that doesn't include the protocol, then the highlighting of the URL will be removed", async ({
+                page,
+            }) => {
+                const editor = page.locator("div#editor");
+
+                await editor.type("google.com");
+
+                for (let i = 0; i < 10; i++) {
+                    await editor.press("ArrowLeft");
+                }
+
+                await editor.type("#100DaysOfCode");
+
+                const span = page.locator("span.highlight");
+                const html = await editor.innerHTML();
+
+                await expect(span).toBeVisible();
+                await expect(html).toBe(
+                    '<p><span class="highlight">#100DaysOfCodegoogle</span>.com</p>'
+                );
+            });
+
+            test("If we add the # character before a highlighted URL that includes the protocol, then nothing will be highlighted", async ({
+                page,
+            }) => {
+                const editor = page.locator("div#editor");
+
+                await editor.type("https://google.com");
+
+                for (let i = 0; i < 18; i++) {
+                    await editor.press("ArrowLeft");
+                }
+
+                await editor.type("#");
+
+                const span = page.locator("span.highlight");
+                const html = await editor.innerHTML();
+
+                await expect(span).toBeHidden();
+                await expect(html).toBe("<p>#https://google.com</p>");
+            });
+
+            test("If we add a hashtag before a highlighted URL that includes the protocol, then nothing will be highlighted", async ({
+                page,
+            }) => {
+                const editor = page.locator("div#editor");
+
+                await editor.type("https://google.com");
+
+                for (let i = 0; i < 18; i++) {
+                    await editor.press("ArrowLeft");
+                }
+
+                await editor.type("#100DaysOfCode");
+
+                const span = page.locator("span.highlight");
+                const html = await editor.innerHTML();
+
+                await expect(span).toBeHidden();
+                await expect(html).toBe(
+                    "<p>#100DaysOfCodehttps://google.com</p>"
+                );
+            });
         });
 
         test.describe("URL relationship to cashtags", async () => {
@@ -270,6 +488,92 @@ test.describe("URLs", async () => {
                 await expect(span).toBeVisible();
                 await expect(html).toBe(
                     '<p><span class="highlight">hello.com</span>$google</p>'
+                );
+            });
+
+            test("If we add the $ character before a highlighted URL that doesn't include the protocol, then the highlighting of the URL will be removed", async ({
+                page,
+            }) => {
+                const editor = page.locator("div#editor");
+
+                await editor.type("google.com");
+
+                for (let i = 0; i < 10; i++) {
+                    await editor.press("ArrowLeft");
+                }
+
+                await editor.type("$");
+
+                const span = page.locator("span.highlight");
+                const html = await editor.innerHTML();
+
+                await expect(span).toBeVisible();
+                await expect(html).toBe(
+                    '<p><span class="highlight">$google</span>.com</p>'
+                );
+            });
+
+            test("If we add a cashtag before a highlighted URL that doesn't include the protocol, then the highlighting of the URL will be removed", async ({
+                page,
+            }) => {
+                const editor = page.locator("div#editor");
+
+                await editor.type("google.com");
+
+                for (let i = 0; i < 10; i++) {
+                    await editor.press("ArrowLeft");
+                }
+
+                await editor.type("$AMZN");
+
+                const span = page.locator("span.highlight");
+                const html = await editor.innerHTML();
+
+                await expect(span).toBeHidden();
+                await expect(html).toBe("<p>$AMZNgoogle.com</p>");
+            });
+
+            test("If we add the $ character before a highlighted URL that includes the protocol, then the highlighting of the URL will be removed but the protocol will be highlighted as a cashtag", async ({
+                page,
+            }) => {
+                const editor = page.locator("div#editor");
+
+                await editor.type("https://google.com");
+
+                for (let i = 0; i < 18; i++) {
+                    await editor.press("ArrowLeft");
+                }
+
+                await editor.type("$");
+
+                const span = page.locator("span.highlight");
+                const html = await editor.innerHTML();
+
+                await expect(span).toBeVisible();
+                await expect(html).toBe(
+                    '<p><span class="highlight">$https</span>://google.com</p>'
+                );
+            });
+
+            test("If we add a cashtag before a highlighted URL that includes the protocol, then the highlighting of the URL will be removed, but if the first part still constitues a valid cashtag, it will be highlighted", async ({
+                page,
+            }) => {
+                const editor = page.locator("div#editor");
+
+                await editor.type("https://google.com");
+
+                for (let i = 0; i < 18; i++) {
+                    await editor.press("ArrowLeft");
+                }
+
+                await editor.type("$A");
+
+                const span = page.locator("span.highlight");
+                const html = await editor.innerHTML();
+
+                await expect(span).toBeHidden();
+                await expect(html).toBe(
+                    '<p><span class="highlight"$Ahttps</span>://google.com</p>'
                 );
             });
         });
