@@ -1,5 +1,6 @@
 import { defineConfig } from "rollup";
 import typescript from "@rollup/plugin-typescript";
+import command from "rollup-plugin-command";
 
 export default defineConfig({
     input: "src/index.tsx",
@@ -10,6 +11,6 @@ export default defineConfig({
         format: "cjs",
         strict: true,
     },
-    plugins: [typescript()],
+    plugins: [typescript(), command("yalc publish --push")],
     external: ["react", "react-dom"],
 });
