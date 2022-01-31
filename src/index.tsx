@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from "react";
-import getPattern, { patternFromString } from "./utils/patterns";
+import React, { useState, useEffect, useRef } from "react";
+import patterns from "./utils/patterns";
+import handlers from "./utils/handlers";
 
 const STORAGE_KEY = "highlightPattern";
 
 export default function TweetTextarea(): JSX.Element {
+    const editorRef = useRef<HTMLDivElement | null>(null);
+
     const [pattern, setPattern] = useState<RegExp | null>(null);
 
     // Get pattern from storage and run the get pattern function on load
@@ -17,10 +20,11 @@ export default function TweetTextarea(): JSX.Element {
         // componenet fetches the updated list of top-level
         // domains
         if (storedPattern && storedPattern.trim() !== "") {
-            setPattern(patternFromString(storedPattern));
+            setPattern(patterns.patternFromString(storedPattern));
         }
 
-        getPattern()
+        patterns
+            .initPattern()
             .then((highlightPattern) => {
                 storage.setItem(STORAGE_KEY, highlightPattern.source);
 
@@ -29,90 +33,53 @@ export default function TweetTextarea(): JSX.Element {
             .catch((err) => console.error(err));
     }, []);
 
-    const inputHandler = (event: React.FormEvent<HTMLDivElement>) => {
-        if (pattern) {
-            const editor = event.currentTarget;
-            const text = editor.textContent;
+    /* EVENT LISTENERS */
+    const beforeInputListener = (event: React.FormEvent<HTMLDivElement>) => {
+        if (editorRef) {
+            const selection = document.getSelection();
+            const range = selection?.getRangeAt(0);
+            const selectedText = range?.toString();
 
-            if (text) {
-                const matches = Array.from(text.matchAll(pattern));
+            if (
+                range &&
+                !range.collapsed &&
+                selectedText &&
+                selectedText.length === editorRef.current?.textContent?.length
+            ) {
+                handlers.deleteAllEditorChildren(editorRef.current);
+            }
 
-                let indices: { [index: string]: number } = {};
+            if (editorRef.current?.childNodes.length === 0) {
+                // TODO (Abdelrahman): Figure out how to handle the differences
+                // between Firefox and Chrome
+                handlers.insertParagraphOnEmptyEditor(editorRef.current);
+            }
+        }
+    };
+    const inputListener = (event: React.FormEvent<HTMLDivElement>) => {
+        if (editorRef) {
+            if (editorRef.current) {
+                if (editorRef.current.childNodes.length === 1) {
+                    const child = editorRef.current.firstChild;
 
-                for (const match of matches) {
-                    const fullMatch = match[0];
-                    const str = match[1] || match[2] || match[3] || match[4];
+                    if ((child as HTMLElement)?.tagName !== "P") {
+                        const inputType = (event.nativeEvent as InputEvent)
+                            .inputType;
 
-                    for (let i = 0; i < fullMatch.length; i++) {
                         if (
-                            fullMatch[i] === str[0] &&
-                            match.index !== undefined
+                            inputType &&
+                            (inputType === "deleteContentBackward" ||
+                                inputType === "deleteContentForward") &&
+                            editorRef.current?.textContent?.length === 0
                         ) {
-                            indices[match.index + i] = str.length;
-                            break;
-                        }
-                    }
-                }
-
-                if (Object.keys(indices).length > 0) {
-                    while (editor.firstChild) {
-                        editor.removeChild(editor.firstChild);
-                    }
-
-                    if (
-                        event.type === "input" &&
-                        event.nativeEvent.data === " "
-                    ) {
-                        editor.textContent = text.slice(0, text.length - 1);
-
-                        const textNode = document.createTextNode("\u00A0");
-
-                        editor.appendChild(textNode);
-                    } else {
-                        editor.textContent = text;
-                    }
-
-                    const sortFunc = (a: string, b: string): number => {
-                        return Number(b) - Number(a);
-                    };
-
-                    const keys = Object.keys(indices).sort(sortFunc);
-
-                    const sel = window.getSelection();
-                    if (sel) {
-                        const range = sel.getRangeAt(0);
-
-                        if (range) {
-                            if (
-                                editor.firstChild &&
-                                editor.firstChild.nodeType === 3
-                            ) {
-                                for (const key of keys) {
-                                    range.setStart(
-                                        editor.firstChild,
-                                        Number(key)
-                                    );
-                                    range.setEnd(
-                                        editor.firstChild,
-                                        Number(key) + indices[key]
-                                    );
-
-                                    const highlightNode =
-                                        document.createElement("span");
-                                    highlightNode.style.color = "red";
-
-                                    range.surroundContents(highlightNode);
-                                }
-                            }
-
-                            range.setEnd(editor, editor.childNodes.length);
-                            range.collapse();
+                            handlers.deleteAllEditorChildren(editorRef.current);
                         }
                     }
                 }
             }
         }
     };
+    /* END EVENT LISTENERS */
 
     const style: React.CSSProperties = {
         padding: "1em",
@@ -120,6 +87,13 @@ export default function TweetTextarea(): JSX.Element {
     };
 
     return (
-        <div id="editor" style={style} onInput={inputHandler} contentEditable />
+        <div
+            id="editor"
+            ref={editorRef}
+            style={style}
+            onBeforeInput={beforeInputListener}
+            onInput={inputListener}
+            contentEditable
+        />
     );
 }

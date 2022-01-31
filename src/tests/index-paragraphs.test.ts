@@ -14,7 +14,7 @@ test.describe("Paragraphs", async () => {
 
         const html = await editor.innerHTML();
 
-        await expect(html).toBe("<p>Hello from TweetTextarea</p>");
+        await expect(html).toBe("<p>Hello from TweetTextarea<br></p>");
     });
 
     test("When user presses Enter in an empty editor, it should create new paragraphs", async ({

@@ -3,11 +3,11 @@ const mentionPattern = /(?:^|[^\w@#$])(@\w+(?!:\/\/))(?=[^\w@]|$)/gim;
 const cashatgPattern =
     /(?:^|[^\w@#$])(\$[a-zA-Z]{1,6}(?:_[a-zA-Z]{1,2})?)(?=[\W_]|$)/gim;
 
-export function patternFromString(str: string): RegExp {
+function patternFromString(str: string): RegExp {
     return new RegExp(str, "gim");
 }
 
-export default function getPattern() {
+function initPattern() {
     return new Promise<RegExp>((resolve, reject) => {
         fetch("https://data.iana.org/TLD/tlds-alpha-by-domain.txt")
             .then((response) => response.text())
@@ -39,7 +39,7 @@ export default function getPattern() {
                         /(?:\/(?:[\w\-#=+\/]*[~!@$%&*\[\];:'\|,\.\?]+[\w\-#=+\/]+|[\w\-#=+\/]*)*)*/
                             .source +
                         ")" +
-                        /(?=$|\W)/.source,
+                        /(?=$|[\W_])/.source,
                     "gim"
                 );
 
@@ -53,3 +53,10 @@ export default function getPattern() {
             .catch((error) => reject(error));
     });
 }
+
+const patterns = {
+    initPattern,
+    patternFromString,
+};
+
+export default patterns;
