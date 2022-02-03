@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import patterns from "./utils/patterns";
 import handlers from "./utils/handlers";
+import "./static/editorStyles.css";
 
 const STORAGE_KEY = "highlightPattern";
 
@@ -50,9 +51,19 @@ export default function TweetTextarea(): JSX.Element {
             }
 
             if (editorRef.current?.childNodes.length === 0) {
-                // TODO (Abdelrahman): Figure out how to handle the differences
-                // between Firefox and Chrome
-                handlers.insertParagraphOnEmptyEditor(editorRef.current);
+                event.preventDefault();
+
+                const inputEvent = event as unknown as InputEvent;
+                const data = inputEvent.data;
+                const keyboardKey =
+                    data === "\n" || data === "\r" ? "Enter" : inputEvent.data;
+
+                if (keyboardKey) {
+                    handlers.insertParagraphOnEmptyEditor(
+                        editorRef.current,
+                        keyboardKey
+                    );
+                }
             }
         }
     };
@@ -81,16 +92,10 @@ export default function TweetTextarea(): JSX.Element {
     };
     /* END EVENT LISTENERS */
 
-    const style: React.CSSProperties = {
-        padding: "1em",
-        border: "solid 1px black",
-    };
-
     return (
         <div
-            id="editor"
+            className="tweet-textarea"
             ref={editorRef}
-            style={style}
             onBeforeInput={beforeInputListener}
             onInput={inputListener}
             contentEditable

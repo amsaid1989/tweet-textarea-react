@@ -9,7 +9,7 @@ test.describe("URLs", async () => {
         test("If the user types a string that looks like a URL, but it doesn't match the URL pattern, then it shouldn't be formatted", async ({
             page,
         }) => {
-            const editor = page.locator("div#editor");
+            const editor = page.locator("div.tweet-textarea");
 
             await editor.type("hello.test");
 
@@ -23,7 +23,7 @@ test.describe("URLs", async () => {
         test("Non-word characters, other than dots and hyphens, are not allowed before the top level domain", async ({
             page,
         }) => {
-            const editor = page.locator("div#editor");
+            const editor = page.locator("div.tweet-textarea");
 
             await editor.type("hello/world.com");
 
@@ -37,7 +37,7 @@ test.describe("URLs", async () => {
         test("A URL that is not at the beginning of the line or not surrounded by spaces at both ends should not be formatted", async ({
             page,
         }) => {
-            const editor = page.locator("div#editor");
+            const editor = page.locator("div.tweet-textarea");
 
             await editor.type("hellohttps://google.com");
 
@@ -51,7 +51,7 @@ test.describe("URLs", async () => {
         test("If the user erases characters from a highlighted URL, making it no longer matching the URL pattern, then the formatting should be removed", async ({
             page,
         }) => {
-            const editor = page.locator("div#editor");
+            const editor = page.locator("div.tweet-textarea");
 
             await editor.type("hello.com");
 
@@ -71,7 +71,7 @@ test.describe("URLs", async () => {
         test("If the user types a string that matches the URL pattern, then it should be highlighted", async ({
             page,
         }) => {
-            const editor = page.locator("div#editor");
+            const editor = page.locator("div.tweet-textarea");
 
             await editor.type("hello.com");
 
@@ -87,7 +87,7 @@ test.describe("URLs", async () => {
         test("http and https are allowed as part of the URL", async ({
             page,
         }) => {
-            const editor = page.locator("div#editor");
+            const editor = page.locator("div.tweet-textarea");
 
             await editor.type("http://google.com https://google.com");
 
@@ -103,7 +103,7 @@ test.describe("URLs", async () => {
         test("'www.' should be allowed as part of the URL", async ({
             page,
         }) => {
-            const editor = page.locator("div#editor");
+            const editor = page.locator("div.tweet-textarea");
 
             await editor.type("www.hello.com");
 
@@ -119,7 +119,7 @@ test.describe("URLs", async () => {
         test("Subdomains should be allowed and highlighted as part of the URL", async ({
             page,
         }) => {
-            const editor = page.locator("div#editor");
+            const editor = page.locator("div.tweet-textarea");
 
             await editor.type("test.hello.com");
 
@@ -135,7 +135,7 @@ test.describe("URLs", async () => {
         test("Dots and hyphens are allowed in the top level domain part", async ({
             page,
         }) => {
-            const editor = page.locator("div#editor");
+            const editor = page.locator("div.tweet-textarea");
 
             await editor.type("the-wizard-apprentice.com");
 
@@ -151,7 +151,7 @@ test.describe("URLs", async () => {
         test("Subdirectories should be allowed and highlighted as part of a URL", async ({
             page,
         }) => {
-            const editor = page.locator("div#editor");
+            const editor = page.locator("div.tweet-textarea");
 
             await editor.type("hello.com/greetings");
 
@@ -167,7 +167,7 @@ test.describe("URLs", async () => {
         test("All word characters and some non-word characters should be allowed in the subdirectory part of the URL", async ({
             page,
         }) => {
-            const editor = page.locator("div#editor");
+            const editor = page.locator("div.tweet-textarea");
 
             await editor.type("hello.com/greeting&salutations$hi%test.html");
 
@@ -183,7 +183,7 @@ test.describe("URLs", async () => {
         test("If the user erases characters from a string that is not highlighted as URL, making it match the URL pattern, then it will be highlighted", async ({
             page,
         }) => {
-            const editor = page.locator("div#editor");
+            const editor = page.locator("div.tweet-textarea");
 
             await editor.type("hello .com");
 
@@ -208,7 +208,7 @@ test.describe("URLs", async () => {
             test("If we have two URLs, that don't include the protocol, sitting next to each other with nothing separating them, then they will be highlighted as 1 URL", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("google.comtwitter.com");
 
@@ -224,7 +224,7 @@ test.describe("URLs", async () => {
             test("If we have two URLs, with the first one including the protocol, sitting next to each other with nothing separating them, then they will be highlighted as 1 URL", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("https://google.comtwitter.com");
 
@@ -240,7 +240,7 @@ test.describe("URLs", async () => {
             test("If we have two URLs, with both including the protocol, sitting next to each other with nothing separating them, then none of them will be highlighted", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("https://google.comhttps://twitter.com");
 
@@ -258,7 +258,7 @@ test.describe("URLs", async () => {
             test("If a user mention comes immediately after the top level domain, then neither the URL nor the user mention will be highlighted", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com@amsaid198");
 
@@ -272,7 +272,7 @@ test.describe("URLs", async () => {
             test("If a user mention comes immediately after the top level domain, but there is another part of the URL that can work as top level domain, then that part will be highlighted", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.co.uk@amsaid198");
 
@@ -288,7 +288,7 @@ test.describe("URLs", async () => {
             test("If we add the @ character before a highlighted URL that doesn't include the protocol, then the highlighting of the URL will be removed", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("google.com");
 
@@ -310,7 +310,7 @@ test.describe("URLs", async () => {
             test("If we add a user mention before a highlighted URL that doesn't include the protocol, then the highlighting of the URL will be removed", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("google.com");
 
@@ -332,7 +332,7 @@ test.describe("URLs", async () => {
             test("If we add the @ character before a highlighted URL that includes the protocol, then nothing will be highlighted", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("https://google.com");
 
@@ -352,7 +352,7 @@ test.describe("URLs", async () => {
             test("If we add a user mention before a highlighted URL that includes the protocol, then nothing will be highlighted", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("https://google.com");
 
@@ -374,7 +374,7 @@ test.describe("URLs", async () => {
             test("If a hashtag comes immediately after the top level domain of the URL, then the URL will be highlighted, but the hashtag will not", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com#100DaysOfCode");
 
@@ -390,7 +390,7 @@ test.describe("URLs", async () => {
             test("If we add the # character before a highlighted URL that doesn't include the protocol, then the highlighting of the URL will be removed", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("google.com");
 
@@ -412,7 +412,7 @@ test.describe("URLs", async () => {
             test("If we add a hashtag before a highlighted URL that doesn't include the protocol, then the highlighting of the URL will be removed", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("google.com");
 
@@ -434,7 +434,7 @@ test.describe("URLs", async () => {
             test("If we add the # character before a highlighted URL that includes the protocol, then nothing will be highlighted", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("https://google.com");
 
@@ -454,7 +454,7 @@ test.describe("URLs", async () => {
             test("If we add a hashtag before a highlighted URL that includes the protocol, then nothing will be highlighted", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("https://google.com");
 
@@ -478,7 +478,7 @@ test.describe("URLs", async () => {
             test("If a cashtag comes immediately after the top level domain of the URL, then the URL will be highlighted, but the cashtag will not", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com$google");
 
@@ -494,7 +494,7 @@ test.describe("URLs", async () => {
             test("If we add the $ character before a highlighted URL that doesn't include the protocol, then the highlighting of the URL will be removed", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("google.com");
 
@@ -516,7 +516,7 @@ test.describe("URLs", async () => {
             test("If we add a cashtag before a highlighted URL that doesn't include the protocol, then the highlighting of the URL will be removed", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("google.com");
 
@@ -536,7 +536,7 @@ test.describe("URLs", async () => {
             test("If we add the $ character before a highlighted URL that includes the protocol, then the highlighting of the URL will be removed but the protocol will be highlighted as a cashtag", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("https://google.com");
 
@@ -558,7 +558,7 @@ test.describe("URLs", async () => {
             test("If we add a cashtag before a highlighted URL that includes the protocol, then the highlighting of the URL will be removed, but if the first part still constitues a valid cashtag, it will be highlighted", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("https://google.com");
 
@@ -585,7 +585,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL ends with /, then the / will be highlighted as part of the URL", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com/greetings/");
 
@@ -601,7 +601,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL ends with the # character, then the # will be highlighted as part of the URL", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com/greetings#");
 
@@ -617,7 +617,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL ends with the - character, then the - will be highlighted as part of the URL", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com/greetings-");
 
@@ -633,7 +633,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL ends with the = character then the = will be highlighted as part of the URL", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com/greetings=");
 
@@ -649,7 +649,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL ends with the + character then the + will be highlighted as part of the URL", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com/greetings+");
 
@@ -665,7 +665,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL includes the ` character, then the highlighting will only apply to everything before the ` character", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type(
                     "hello.com/greetings` hello.com/greetings`testing"
@@ -683,7 +683,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL includes the ^ character, then the highlighting will only apply to everything before the ^ character", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type(
                     "hello.com/greetings^ hello.com/greetings^testing"
@@ -701,7 +701,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL includes the ( character, then the highlighting will only apply to everything before the ( character", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type(
                     "hello.com/greetings( hello.com/greetings(testing"
@@ -719,7 +719,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL includes the ) character, then the highlighting will only apply to everything before the ) character", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type(
                     "hello.com/greetings) hello.com/greetings)testing"
@@ -737,7 +737,7 @@ test.describe("URLs", async () => {
             test('If the subdirectory part of the URL includes the " character, then the highlighting will only apply to everything before the " character', async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type(
                     'hello.com/greetings" hello.com/greetings"testing'
@@ -755,7 +755,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL includes the \\ character, then the highlighting will only apply to everything before the \\ character", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type(
                     "hello.com/greetings\\ hello.com/greetings\\testing"
@@ -773,7 +773,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL includes the < character, then the highlighting will only apply to everything before the < character", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type(
                     "hello.com/greetings< hello.com/greetings<testing"
@@ -791,7 +791,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL includes the > character, then the highlighting will only apply to everything before the > character", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type(
                     "hello.com/greetings> hello.com/greetings>testing"
@@ -809,7 +809,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL ends with the ~ character, then the highlighting will only apply to everything before the ~ character", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com/greetings~");
 
@@ -825,7 +825,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL includes the ~ character but not at the end, then the ~ character will be included in the highlighting", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com/greetings~hello");
 
@@ -841,7 +841,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL ends with the ! character, then the highlighting will only apply to everything before the ! character", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com/greetings!");
 
@@ -857,7 +857,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL includes the ! character but not at the end, then the ! character will be included in the highlighting", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com/greetings!hello");
 
@@ -873,7 +873,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL ends with the @ character, then the highlighting will only apply to everything before the @ character", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com/greetings@");
 
@@ -889,7 +889,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL includes the @ character but not at the end, then the @ character will be included in the highlighting", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com/greetings@hello");
 
@@ -905,7 +905,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL ends with the $ character, then the highlighting will only apply to everything before the $ character", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com/greetings$");
 
@@ -921,7 +921,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL includes the $ character but not at the end, then the $ character will be included in the highlighting", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com/greetings$hello");
 
@@ -937,7 +937,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL ends with the % character, then the highlighting will only apply to everything before the % character", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com/greetings%");
 
@@ -953,7 +953,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL includes the % character but not at the end, then the % character will be included in the highlighting", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com/greetings%hello");
 
@@ -969,7 +969,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL ends with the & character, then the highlighting will only apply to everything before the & character", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com/greetings&");
 
@@ -985,7 +985,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL includes the & character but not at the end, then the & character will be included in the highlighting", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com/greetings&hello");
 
@@ -1001,7 +1001,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL ends with the * character, then the highlighting will only apply to everything before the * character", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com/greetings*");
 
@@ -1017,7 +1017,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL includes the * character but not at the end, then the * character will be included in the highlighting", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com/greetings*hello");
 
@@ -1033,7 +1033,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL ends with the [ character, then the highlighting will only apply to everything before the [ character", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com/greetings[");
 
@@ -1049,7 +1049,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL includes the [ character but not at the end, then the [ character will be included in the highlighting", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com/greetings[hello");
 
@@ -1065,7 +1065,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL ends with the ] character, then the highlighting will only apply to everything before the ] character", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com/greetings]");
 
@@ -1081,7 +1081,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL includes the ] character but not at the end, then the ] character will be included in the highlighting", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com/greetings]hello");
 
@@ -1097,7 +1097,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL ends with the : character, then the highlighting will only apply to everything before the : character", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com/greetings:");
 
@@ -1113,7 +1113,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL includes the : character but not at the end, then the : character will be included in the highlighting", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com/greetings:hello");
 
@@ -1129,7 +1129,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL ends with the ; character, then the highlighting will only apply to everything before the ; character", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com/greetings;");
 
@@ -1145,7 +1145,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL includes the ; character but not at the end, then the ; character will be included in the highlighting", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com/greetings;hello");
 
@@ -1161,7 +1161,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL ends with the ' character, then the highlighting will only apply to everything before the ' character", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com/greetings'");
 
@@ -1177,7 +1177,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL includes the ' character but not at the end, then the ' character will be included in the highlighting", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com/greetings'hello");
 
@@ -1193,7 +1193,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL ends with the | character, then the highlighting will only apply to everything before the | character", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com/greetings|");
 
@@ -1209,7 +1209,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL includes the | character but not at the end, then the | character will be included in the highlighting", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com/greetings|hello");
 
@@ -1225,7 +1225,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL ends with the , character, then the highlighting will only apply to everything before the , character", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com/greetings,");
 
@@ -1241,7 +1241,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL includes the , character but not at the end, then the , character will be included in the highlighting", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com/greetings,hello");
 
@@ -1257,7 +1257,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL ends with the ? character, then the highlighting will only apply to everything before the ? character", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com/greetings?");
 
@@ -1273,7 +1273,7 @@ test.describe("URLs", async () => {
             test("If the subdirectory part of the URL includes the ? character but not at the end, then the ? character will be included in the highlighting", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("hello.com/greetings?hello");
 

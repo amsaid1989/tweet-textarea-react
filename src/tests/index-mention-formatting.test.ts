@@ -9,7 +9,7 @@ test.describe("Mentions", async () => {
         test("When the user type the @ character alone, nothing should be formatted", async ({
             page,
         }) => {
-            const editor = page.locator("div#editor");
+            const editor = page.locator("div.tweet-textarea");
 
             await editor.type("Hello @");
 
@@ -23,7 +23,7 @@ test.describe("Mentions", async () => {
         test("If the user types non-word characters immediately after the @, it shouldn't be highlighted", async ({
             page,
         }) => {
-            const editor = page.locator("div#editor");
+            const editor = page.locator("div.tweet-textarea");
 
             await editor.type("Hello @-amsaid1989");
 
@@ -37,7 +37,7 @@ test.describe("Mentions", async () => {
         test("When the user erases characters from a string that matches the mention pattern, making it no longer matching, the highlighting should be removed", async ({
             page,
         }) => {
-            const editor = page.locator("div#editor");
+            const editor = page.locator("div.tweet-textarea");
 
             await editor.type("Hello @amsaid");
 
@@ -55,7 +55,7 @@ test.describe("Mentions", async () => {
         test("If the user adds word characters immediately before a highlighted mention, with no non-word characters separating them, then the highlighting should be removed", async ({
             page,
         }) => {
-            const editor = page.locator("div#editor");
+            const editor = page.locator("div.tweet-textarea");
 
             await editor.type("Hello @amsaid1989");
 
@@ -75,7 +75,7 @@ test.describe("Mentions", async () => {
         test("If the user types something after the @, and the result matches the mention pattern, it should be highlighted", async ({
             page,
         }) => {
-            const editor = page.locator("div#editor");
+            const editor = page.locator("div.tweet-textarea");
 
             await editor.type("Hello @amsaid1989");
 
@@ -91,7 +91,7 @@ test.describe("Mentions", async () => {
         test("When the user adds a non-word character after a sequence of word characters that match the mention pattern, then the formatting should stop before the non-word character", async ({
             page,
         }) => {
-            const editor = page.locator("div#editor");
+            const editor = page.locator("div.tweet-textarea");
 
             await editor.type("Hello @amsaid1989-2022");
 
@@ -107,7 +107,7 @@ test.describe("Mentions", async () => {
         test("If the user erases characters from a string that doesn't match the mention pattern, making it match, then the text should be highlighted", async ({
             page,
         }) => {
-            const editor = page.locator("div#editor");
+            const editor = page.locator("div.tweet-textarea");
 
             await editor.type("Hello @-amsaid");
 
@@ -132,7 +132,7 @@ test.describe("Mentions", async () => {
             test("If the user types the @ character immediately before a highlighted mention, with no characters separating them, then the highlighting will be removed", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("Hello @amsaid");
 
@@ -152,7 +152,7 @@ test.describe("Mentions", async () => {
             test("If the user types the @ character, followed by other word characters, immediately before a highlighted hashtag, with no characters separating them, then the highlighting will be removed", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("Hello @amsaid");
 
@@ -170,7 +170,7 @@ test.describe("Mentions", async () => {
             test("If the user types the @ character after a highlighted mention, then the highlighting will be removed", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("Hello @amsaid1989@");
 
@@ -184,7 +184,7 @@ test.describe("Mentions", async () => {
             test("If we have multiple mentions one after the other, with no non-word characters separating them, then none of them should be highlighted", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("@amsaid@abdelrahman");
 
@@ -200,7 +200,7 @@ test.describe("Mentions", async () => {
             test("If the user types the # character after a highlighted mention, then the highlighting will be maintained", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("Hello @amsaid1989#");
 
@@ -216,7 +216,7 @@ test.describe("Mentions", async () => {
             test("If the user types a valid hashtag after a highlighted mention, then the highlighting will be maintained", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("Hello @amsaid1989#100DaysOfCode");
 
@@ -232,7 +232,7 @@ test.describe("Mentions", async () => {
             test("If the user types the # character immediately before a highlighted mention, with no characters separating them, then the highlighting will be removed", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("Hello @amsaid");
 
@@ -252,7 +252,7 @@ test.describe("Mentions", async () => {
             test("If the user types the # character, followed by other word characters, immediately before a highlighted mention, with no characters separating them, then the highlighting will be removed", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("Hello @amsaid");
 
@@ -272,7 +272,7 @@ test.describe("Mentions", async () => {
             test("If the user types the $ character after a highlighted mention, then the highlighting will be maintained", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("Hello @amsaid1989$");
 
@@ -288,7 +288,7 @@ test.describe("Mentions", async () => {
             test("If the user types a valid cashtag after a highlighted mention, then the highlighting will be maintained", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("Hello @amsaid1989$AMZN");
 
@@ -304,7 +304,7 @@ test.describe("Mentions", async () => {
             test("If the user types the $ character immediately before a highlighted mention, with no characters separating them, then the highlighting will be removed", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("Hello @amsaid");
 
@@ -324,7 +324,7 @@ test.describe("Mentions", async () => {
             test("If the user types the $ character, followed by other word characters, immediately before a highlighted hashtag, with no characters separating them, then the highlighting will be removed", async ({
                 page,
             }) => {
-                const editor = page.locator("div#editor");
+                const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("Hello @amsaid");
 

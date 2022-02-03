@@ -1,4 +1,9 @@
-.editor-paragraph {
+.tweet-textarea {
+    padding: 1em;
+    border: solid 1px #bbb;
+}
+
+.tweet-textarea p {
     margin: 0;
     padding: 0;
 }
