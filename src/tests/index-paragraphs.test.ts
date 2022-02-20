@@ -10,11 +10,15 @@ test.describe("Paragraphs", async () => {
     }) => {
         const editor = page.locator("div.tweet-textarea");
 
-        await editor.type("Hello from TweetTextarea");
+        await editor.type("Hello from TweetTextarea", { delay: 50 });
 
-        const html = await editor.innerHTML();
+        const p = editor.locator("p");
 
-        await expect(html).toBe("<p>Hello from TweetTextarea<br></p>");
+        await expect(p).toBeVisible();
+
+        await expect(await p.count()).toBe(1);
+
+        await expect(p).toHaveText("Hello from TweetTextarea");
     });
 
     test("When user presses Enter in an empty editor, it should create new paragraphs", async ({
@@ -24,9 +28,13 @@ test.describe("Paragraphs", async () => {
 
         await editor.press("Enter");
 
-        const html = await editor.innerHTML();
+        const p = editor.locator("p");
 
-        await expect(html).toBe("<p><br></p><p><br></p>");
+        await expect(await p.count()).toBe(2);
+
+        await expect(
+            (await p.allTextContents()).every((text) => text === "")
+        ).toBeTruthy();
     });
 
     test("When user presses Backspace in an empty paragraph, it should be deleted", async ({
@@ -38,14 +46,8 @@ test.describe("Paragraphs", async () => {
 
         await editor.press("Backspace");
 
-        let html = await editor.innerHTML();
+        const p = editor.locator("p");
 
-        await expect(html).toBe("<p><br></p>");
-
-        await editor.press("Backspace");
-
-        html = await editor.innerHTML();
-
-        await expect(html).toBe("");
+        await expect(await p.count()).toBe(0);
     });
 });

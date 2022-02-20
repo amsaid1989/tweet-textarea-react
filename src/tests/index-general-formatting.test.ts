@@ -12,8 +12,9 @@ test("When the user types some text that doesn't match any patterns, nothing sho
     await editor.type("Hello from TweetTextarea");
 
     const span = page.locator("span.highlight");
-    const html = await editor.innerHTML();
+    const p = editor.locator("p");
 
     await expect(span).toBeHidden();
-    await expect(html).toBe("<p>Hello from TweetTextarea</p>");
+    await expect(await p.count()).toBe(1);
+    await expect(p).toHaveText("Hello from TweetTextarea");
 });
