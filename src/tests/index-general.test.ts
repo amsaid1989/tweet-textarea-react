@@ -17,7 +17,7 @@ test.describe("General tests", async () => {
     test("The editor accepts user input", async ({ page }) => {
         const editor = page.locator("div.tweet-textarea");
 
-        await editor.type("Hello from TweetTextarea!", { delay: 50 });
+        await editor.type("Hello from TweetTextarea!");
 
         await expect(editor).toHaveText("Hello from TweetTextarea!");
     });
