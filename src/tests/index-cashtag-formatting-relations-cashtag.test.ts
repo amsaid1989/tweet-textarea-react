@@ -33,7 +33,7 @@ test.describe("Cashtags", async () => {
             }) => {
                 const editor = page.locator("div.tweet-textarea");
 
-                await editor.type("Hello $google$", { delay: 50 });
+                await editor.type("Hello $google$", { delay: 100 });
 
                 const span = editor.locator("span");
 

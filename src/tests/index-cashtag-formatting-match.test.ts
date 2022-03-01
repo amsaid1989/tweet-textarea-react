@@ -74,7 +74,7 @@ test.describe("Cashtags", async () => {
             await editor.type("Hello $googleinc", { delay: 50 });
 
             for (let i = 0; i < 3; i++) {
-                await editor.press("Backspace");
+                await editor.press("Backspace", { delay: 50 });
             }
 
             const span = editor.locator("span");
