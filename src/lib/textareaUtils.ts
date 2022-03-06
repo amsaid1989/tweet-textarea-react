@@ -54,7 +54,7 @@ function formatAfterUserInput(range: Range, pattern: RegExp) {
 
     formatNodeTriplet(range, pattern, parentData, nodeTriplet);
 
-    repositionCursorAfterUserInputFormat(range, parentData, offset);
+    repositionCursorAfterUserInputFormat(parentData, offset);
 }
 
 function formatAfterNewParagraph(range: Range, pattern: RegExp) {
@@ -107,14 +107,13 @@ function formatNodeTriplet(
 
     const textNode = document.createTextNode(text);
     range.insertNode(textNode);
-    range.setStart(textNode, textNode.textContent?.length || 0);
-    range.collapse(true);
+
+    setCursorPosition(textNode, textNode.textContent?.length || 0);
 
     format(range, textNode, pattern);
 }
 
 function repositionCursorAfterUserInputFormat(
-    range: Range,
     paragraphAndOffset: INodeAndOffset,
     offset: number
 ): void {
@@ -131,14 +130,14 @@ function repositionCursorAfterUserInputFormat(
             } else {
                 offset -= currentLength;
 
-                if (child.nodeType === 3) {
-                    range.setStart(child, offset);
-                } else {
+                let startNode: Node = child;
+                if (child.nodeType !== 3) {
                     if (child.firstChild) {
-                        range.setStart(child.firstChild, offset);
+                        startNode = child.firstChild;
                     }
                 }
-                range.collapse(true);
+
+                setCursorPosition(startNode, offset);
 
                 break;
             }
@@ -172,13 +171,12 @@ function format(
 
                 range.surroundContents(span);
 
+                let startNode: Node = span;
                 if (finalNode) {
-                    range.setStart(finalNode, 0);
-                } else {
-                    range.setStart(span, 0);
+                    startNode = finalNode;
                 }
 
-                range.collapse(true);
+                setCursorPosition(startNode, 0);
             }
         }
     }
@@ -238,16 +236,14 @@ function insertParagraphOnEmptyEditor(
         editor.appendChild(paragraph);
         editor.appendChild(paragraph2);
 
-        range.setStart(paragraph2, 0);
-        range.collapse(true);
+        setCursorPosition(paragraph2, 0);
     } else {
         const textNode = document.createTextNode(keyboardKey);
 
         paragraph.appendChild(textNode);
         editor.appendChild(paragraph);
 
-        range.setStart(textNode, 1);
-        range.collapse(true);
+        setCursorPosition(textNode, 1);
     }
 }
 
@@ -269,8 +265,7 @@ function pasteTextInEmptyEditor(editor: HTMLDivElement, textNode: Text): void {
 
     editor.appendChild(paragraph);
 
-    range.setStart(textNode, textNode.textContent?.length || 0);
-    range.collapse(true);
+    setCursorPosition(textNode, textNode.textContent?.length || 0);
 }
 
 function addNonBreakingSpace(range: Range, node: Node): void {
@@ -298,8 +293,7 @@ function addNonBreakingSpace(range: Range, node: Node): void {
 
     range.insertNode(textNode);
 
-    range.setStart(textNode, 1);
-    range.collapse(true);
+    setCursorPosition(textNode, 1);
 }
 
 function deleteAllEditorChildren(editor: HTMLDivElement): void {
@@ -314,6 +308,27 @@ function isDeletionEvent(inputType: string): boolean {
         inputType === "deleteContentForward" ||
         inputType === "deleteByCut"
     );
+}
+
+function setCursorPosition(node: Node, offset: number): void {
+    const sel = document.getSelection();
+
+    if (!sel) {
+        return;
+    }
+
+    const range = sel.getRangeAt(0);
+
+    if (!range) {
+        return;
+    }
+
+    sel.removeAllRanges();
+
+    range.setStart(node, offset);
+    range.collapse(true);
+
+    sel.addRange(range);
 }
 
 function findNodeInParent(parent: Node, node: Node): number | undefined {
@@ -358,7 +373,7 @@ function getStartNodeAndOffset(
             // be nothing to format, so we just set
             // the range to start of the paragraph
             // and return.
-            range.setStart(node, 0);
+            setCursorPosition(node, 0);
             return { node: null, offset: null };
         }
 
@@ -370,7 +385,7 @@ function getStartNodeAndOffset(
             offset = node.textContent.length;
         }
 
-        range.setStart(node, offset);
+        setCursorPosition(node, offset);
     }
 
     if (node.nodeType === 3) {

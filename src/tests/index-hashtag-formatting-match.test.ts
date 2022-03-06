@@ -11,7 +11,7 @@ test.describe("Hashtags", async () => {
         }) => {
             const editor = page.locator("div.tweet-textarea");
 
-            await editor.type("Hello #100DaysOfCode", { delay: 50 });
+            await editor.type("Hello #100DaysOfCode", { delay: 100 });
 
             const span = editor.locator("span");
 
