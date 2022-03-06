@@ -5,7 +5,17 @@ import "./static/editorStyles.css";
 
 const STORAGE_KEY = "highlightPattern";
 
-export default function TweetTextarea(): JSX.Element {
+interface highlightStyle {
+    highlightClassName?: string;
+}
+
+type TweetTextareaProps = Omit<
+    React.HTMLAttributes<HTMLDivElement>,
+    "ref" | "onBeforeInput" | "onInput" | "contentEditable"
+> &
+    highlightStyle;
+
+export default function TweetTextarea(props: TweetTextareaProps): JSX.Element {
     const editorRef = useRef<HTMLDivElement | null>(null);
 
     const [pattern, setPattern] = useState<RegExp | null>(null);
@@ -54,7 +64,8 @@ export default function TweetTextarea(): JSX.Element {
 
     return (
         <div
-            className="tweet-textarea"
+            {...props}
+            className={props.className || "tweet-textarea"}
             ref={editorRef}
             onBeforeInput={beforeInputListener}
             onInput={inputListener}
