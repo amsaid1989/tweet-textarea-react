@@ -11,7 +11,7 @@
         "build": "yarn clean; rollup -c",
         "packBuild": "yarn pack --prod && tar -xzvf *.tgz && rm *.tgz",
         "prepPackage": "sed -i '/\"devDependencies\": {/,/},/d' package/package.json",
-        "installPackage": "cd ../test_app && yarn add ../tweet_textarea_component/package",
+        "installPackage": "cd ../test_app && yarn add ../tweet-textarea-react/package",
         "createPackage": "yarn packBuild && yarn prepPackage && yarn installPackage",
         "test": "playwright test"
     },
