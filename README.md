@@ -9,7 +9,7 @@ A simple React component that replicates the behaviour of Twitter's tweet input 
 The component is built from scratch and it doesn't rely on any dependencies (except for React itself), so it is a relatively lightweight component.
 
 ## Installation
----
+
 You can install the component from npm using either `npm` or `yarn`:
 
 ```bash
@@ -23,7 +23,7 @@ yarn add tweet-textarea-react
 ```
 
 ## Usage
----
+
 Once installed, you can start using the component immediately, but first, you need to import it:
 
 ```javascript
@@ -55,9 +55,9 @@ function App() {
 The second default style is the one that defines how URLs, hashtags, etc. will be highlighted. Currently, the component doesn't support overriding this style. However, this will be implemented soon.
 
 ## Licence
----
+
 [MIT](https://mit-license.org/)
 
 ## Keywords
----
+
 [react-component](https://www.npmjs.com/search?q=keywords:react-component) [react](https://www.npmjs.com/search?q=keywords:react) [tweet-textarea](https://www.npmjs.com/search?q=keywords:tweet-textarea)
