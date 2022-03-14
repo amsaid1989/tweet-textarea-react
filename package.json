@@ -1,5 +1,6 @@
 {
     "name": "tweet-textarea-react",
+    "description": "A simple React component that replicates the behaviour of Twitter's tweet input area",
     "version": "1.0.0",
     "main": "dist/cjs/index.js",
     "module": "dist/esm/index.js",
