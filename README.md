@@ -42,7 +42,7 @@ function App() {
 }
 ```
 
-The `TweetTextarea` component supports all attributes that are supported by the `div` element, except for the ones that are required for the component to work. These are the `ref`, `contentEditable`, `onBeforeInput` and `onInput` attributes. If you try to pass any of these attributes, then your React app will probably not compile if you are using `Typescript`, or you attributes will be overridden if you are using `Javascript`.
+The `TweetTextarea` component supports all attributes that are supported by the `div` element, except for the ones that are required for the component to work. These are the `ref`, `contentEditable`, `onBeforeInput` and `onInput` attributes. If you try to pass any of these attributes, then your React app will probably not compile if you are using `TypeScript`, or you attributes will be overridden if you are using `JavaScript`.
 
 The component comes with two sets of default styles applied. The first defines what the textarea itself looks like. This can be overridden by passing a custom class when using the component.
 
