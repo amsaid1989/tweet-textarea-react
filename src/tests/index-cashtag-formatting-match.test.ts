@@ -11,7 +11,7 @@ test.describe("Cashtags", async () => {
         }) => {
             const editor = page.locator("div.tweet-textarea");
 
-            await editor.type("Hello $google", { delay: 50 });
+            await editor.type("Hello $google", { delay: 100 });
 
             const span = editor.locator("span");
 
@@ -26,7 +26,7 @@ test.describe("Cashtags", async () => {
         }) => {
             const editor = page.locator("div.tweet-textarea");
 
-            await editor.type("Hello $google_uk", { delay: 50 });
+            await editor.type("Hello $google_uk", { delay: 100 });
 
             const span = editor.locator("span");
 
@@ -41,7 +41,7 @@ test.describe("Cashtags", async () => {
         }) => {
             const editor = page.locator("div.tweet-textarea");
 
-            await editor.type("Hello $google_inc", { delay: 50 });
+            await editor.type("Hello $google_inc", { delay: 100 });
 
             const span = editor.locator("span");
 
@@ -56,7 +56,7 @@ test.describe("Cashtags", async () => {
         }) => {
             const editor = page.locator("div.tweet-textarea");
 
-            await editor.type("Hello $google-2022", { delay: 50 });
+            await editor.type("Hello $google-2022", { delay: 100 });
 
             const span = editor.locator("span");
 
@@ -71,10 +71,10 @@ test.describe("Cashtags", async () => {
         }) => {
             const editor = page.locator("div.tweet-textarea");
 
-            await editor.type("Hello $googleinc", { delay: 50 });
+            await editor.type("Hello $googleinc", { delay: 100 });
 
             for (let i = 0; i < 3; i++) {
-                await editor.press("Backspace", { delay: 50 });
+                await editor.press("Backspace", { delay: 100 });
             }
 
             const span = editor.locator("span");

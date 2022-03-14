@@ -12,7 +12,7 @@ test.describe("URLs", async () => {
             }) => {
                 const editor = page.locator("div.tweet-textarea");
 
-                await editor.type("google.comtwitter.com", { delay: 50 });
+                await editor.type("google.comtwitter.com", { delay: 100 });
 
                 const span = editor.locator("span");
 
@@ -28,7 +28,7 @@ test.describe("URLs", async () => {
                 const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("https://google.comtwitter.com", {
-                    delay: 50,
+                    delay: 100,
                 });
 
                 const span = editor.locator("span");
@@ -45,7 +45,7 @@ test.describe("URLs", async () => {
                 const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("https://google.comhttps://twitter.com", {
-                    delay: 50,
+                    delay: 100,
                 });
 
                 const p = editor.locator("p");

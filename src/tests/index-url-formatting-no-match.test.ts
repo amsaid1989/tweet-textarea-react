@@ -11,7 +11,7 @@ test.describe("URLs", async () => {
         }) => {
             const editor = page.locator("div.tweet-textarea");
 
-            await editor.type("hello.test", { delay: 50 });
+            await editor.type("hello.test", { delay: 100 });
 
             const p = editor.locator("p");
             const span = editor.locator("span");
@@ -26,7 +26,7 @@ test.describe("URLs", async () => {
         }) => {
             const editor = page.locator("div.tweet-textarea");
 
-            await editor.type("hello/world.com", { delay: 50 });
+            await editor.type("hello/world.com", { delay: 100 });
 
             const p = editor.locator("p");
             const span = editor.locator("span");
@@ -41,7 +41,7 @@ test.describe("URLs", async () => {
         }) => {
             const editor = page.locator("div.tweet-textarea");
 
-            await editor.type("hellohttps://google.com", { delay: 50 });
+            await editor.type("hellohttps://google.com", { delay: 100 });
 
             const p = editor.locator("p");
             const span = editor.locator("span");
@@ -56,7 +56,7 @@ test.describe("URLs", async () => {
         }) => {
             const editor = page.locator("div.tweet-textarea");
 
-            await editor.type("hello.com", { delay: 50 });
+            await editor.type("hello.com", { delay: 100 });
 
             for (let i = 0; i < 3; i++) {
                 await editor.press("Backspace");

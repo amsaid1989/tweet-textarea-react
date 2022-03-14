@@ -12,13 +12,13 @@ test.describe("Hashtags", async () => {
             }) => {
                 const editor = page.locator("div.tweet-textarea");
 
-                await editor.type("Hello #100days", { delay: 50 });
+                await editor.type("Hello #100days", { delay: 100 });
 
                 for (let i = 0; i < 8; i++) {
                     await editor.press("ArrowLeft");
                 }
 
-                await editor.type("#", { delay: 50 });
+                await editor.type("#", { delay: 100 });
 
                 const span = editor.locator("span");
                 const html = await editor.innerHTML();
@@ -34,7 +34,7 @@ test.describe("Hashtags", async () => {
             }) => {
                 const editor = page.locator("div.tweet-textarea");
 
-                await editor.type("Hello #100days", { delay: 50 });
+                await editor.type("Hello #100days", { delay: 100 });
 
                 const p = editor.locator("p");
                 const span = editor.locator("span");
@@ -43,7 +43,7 @@ test.describe("Hashtags", async () => {
                     await editor.press("ArrowLeft");
                 }
 
-                await editor.type("#500", { delay: 50 });
+                await editor.type("#500", { delay: 100 });
 
                 await expect(span).toBeHidden();
                 await expect(await p.count()).toBe(1);
@@ -55,7 +55,7 @@ test.describe("Hashtags", async () => {
             }) => {
                 const editor = page.locator("div.tweet-textarea");
 
-                await editor.type("Hello #100DaysOfCode#", { delay: 50 });
+                await editor.type("Hello #100DaysOfCode#", { delay: 100 });
 
                 const p = editor.locator("p");
                 const span = editor.locator("span");
@@ -71,7 +71,7 @@ test.describe("Hashtags", async () => {
                 const editor = page.locator("div.tweet-textarea");
 
                 await editor.type("#buildinpublic#100DaysOfCode", {
-                    delay: 50,
+                    delay: 100,
                 });
 
                 const p = editor.locator("p");

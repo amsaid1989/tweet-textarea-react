@@ -12,7 +12,7 @@ test.describe("Hashtags", async () => {
             }) => {
                 const editor = page.locator("div.tweet-textarea");
 
-                await editor.type("Hello #100DaysOfCode$", { delay: 50 });
+                await editor.type("Hello #100DaysOfCode$", { delay: 100 });
 
                 const span = editor.locator("span");
 
@@ -27,7 +27,7 @@ test.describe("Hashtags", async () => {
             }) => {
                 const editor = page.locator("div.tweet-textarea");
 
-                await editor.type("Hello #100DaysOfCode$AMZN", { delay: 50 });
+                await editor.type("Hello #100DaysOfCode$AMZN", { delay: 100 });
 
                 const span = editor.locator("span");
 
@@ -42,13 +42,13 @@ test.describe("Hashtags", async () => {
             }) => {
                 const editor = page.locator("div.tweet-textarea");
 
-                await editor.type("Hello #100days", { delay: 50 });
+                await editor.type("Hello #100days", { delay: 100 });
 
                 for (let i = 0; i < 8; i++) {
                     await editor.press("ArrowLeft");
                 }
 
-                await editor.type("$", { delay: 50 });
+                await editor.type("$", { delay: 100 });
 
                 const span = editor.locator("span");
 
@@ -63,7 +63,7 @@ test.describe("Hashtags", async () => {
             }) => {
                 const editor = page.locator("div.tweet-textarea");
 
-                await editor.type("Hello #100days", { delay: 50 });
+                await editor.type("Hello #100days", { delay: 100 });
 
                 const span = editor.locator("span");
 
@@ -71,7 +71,7 @@ test.describe("Hashtags", async () => {
                     await editor.press("ArrowLeft");
                 }
 
-                await editor.type("$AMZN", { delay: 50 });
+                await editor.type("$AMZN", { delay: 100 });
 
                 await expect(span).toBeVisible();
                 await expect(await span.count()).toBe(1);

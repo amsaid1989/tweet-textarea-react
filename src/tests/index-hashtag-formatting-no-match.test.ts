@@ -11,7 +11,7 @@ test.describe("Hashtags", async () => {
         }) => {
             const editor = page.locator("div.tweet-textarea");
 
-            await editor.type("Hello #", { delay: 50 });
+            await editor.type("Hello #", { delay: 100 });
 
             const p = editor.locator("p");
             const span = editor.locator("span");
@@ -26,7 +26,7 @@ test.describe("Hashtags", async () => {
         }) => {
             const editor = page.locator("div.tweet-textarea");
 
-            await editor.type("Hello #100", { delay: 50 });
+            await editor.type("Hello #100", { delay: 100 });
 
             const p = editor.locator("p");
             const span = editor.locator("span");
@@ -41,7 +41,7 @@ test.describe("Hashtags", async () => {
         }) => {
             const editor = page.locator("div.tweet-textarea");
 
-            await editor.type("Hello #-hello", { delay: 50 });
+            await editor.type("Hello #-hello", { delay: 100 });
 
             const p = editor.locator("p");
             const span = editor.locator("span");
@@ -56,7 +56,7 @@ test.describe("Hashtags", async () => {
         }) => {
             const editor = page.locator("div.tweet-textarea");
 
-            await editor.type("Hello #100days", { delay: 50 });
+            await editor.type("Hello #100days", { delay: 100 });
 
             for (let i = 0; i < 4; i++) {
                 await editor.press("Backspace");
@@ -75,7 +75,7 @@ test.describe("Hashtags", async () => {
         }) => {
             const editor = page.locator("div.tweet-textarea");
 
-            await editor.type("Hello #100days", { delay: 50 });
+            await editor.type("Hello #100days", { delay: 100 });
 
             const p = editor.locator("p");
             const span = editor.locator("span");
@@ -84,7 +84,7 @@ test.describe("Hashtags", async () => {
                 await editor.press("ArrowLeft");
             }
 
-            await editor.type("from", { delay: 50 });
+            await editor.type("from", { delay: 100 });
 
             await expect(span).toBeHidden();
             await expect(await p.count()).toBe(1);

@@ -26,7 +26,7 @@ test.describe("Hashtags", async () => {
         }) => {
             const editor = page.locator("div.tweet-textarea");
 
-            await editor.type("Hello #100DaysOfCode-2022", { delay: 50 });
+            await editor.type("Hello #100DaysOfCode-2022", { delay: 100 });
 
             const span = editor.locator("span");
             const html = await editor.innerHTML();
@@ -42,7 +42,7 @@ test.describe("Hashtags", async () => {
         }) => {
             const editor = page.locator("div.tweet-textarea");
 
-            await editor.type("Hello #100-days", { delay: 50 });
+            await editor.type("Hello #100-days", { delay: 100 });
 
             for (let i = 0; i < 4; i++) {
                 await editor.press("ArrowLeft");

@@ -12,7 +12,7 @@ test.describe("URLs", async () => {
             }) => {
                 const editor = page.locator("div.tweet-textarea");
 
-                await editor.type("hello.com$google", { delay: 50 });
+                await editor.type("hello.com$google", { delay: 100 });
 
                 const span = editor.locator("span");
 
@@ -27,13 +27,13 @@ test.describe("URLs", async () => {
             }) => {
                 const editor = page.locator("div.tweet-textarea");
 
-                await editor.type("google.com", { delay: 50 });
+                await editor.type("google.com", { delay: 100 });
 
                 for (let i = 0; i < 10; i++) {
                     await editor.press("ArrowLeft");
                 }
 
-                await editor.type("$", { delay: 50 });
+                await editor.type("$", { delay: 100 });
 
                 const span = editor.locator("span");
 
@@ -48,13 +48,13 @@ test.describe("URLs", async () => {
             }) => {
                 const editor = page.locator("div.tweet-textarea");
 
-                await editor.type("google.com", { delay: 50 });
+                await editor.type("google.com", { delay: 100 });
 
                 for (let i = 0; i < 10; i++) {
                     await editor.press("ArrowLeft");
                 }
 
-                await editor.type("$AMZN", { delay: 50 });
+                await editor.type("$AMZN", { delay: 100 });
 
                 const p = editor.locator("p");
                 const span = editor.locator("span");
@@ -69,13 +69,13 @@ test.describe("URLs", async () => {
             }) => {
                 const editor = page.locator("div.tweet-textarea");
 
-                await editor.type("https://google.com", { delay: 50 });
+                await editor.type("https://google.com", { delay: 100 });
 
                 for (let i = 0; i < 18; i++) {
                     await editor.press("ArrowLeft");
                 }
 
-                await editor.type("$", { delay: 50 });
+                await editor.type("$", { delay: 100 });
 
                 const span = editor.locator("span");
 
@@ -90,13 +90,13 @@ test.describe("URLs", async () => {
             }) => {
                 const editor = page.locator("div.tweet-textarea");
 
-                await editor.type("https://google.com", { delay: 50 });
+                await editor.type("https://google.com", { delay: 100 });
 
                 for (let i = 0; i < 18; i++) {
                     await editor.press("ArrowLeft");
                 }
 
-                await editor.type("$A", { delay: 50 });
+                await editor.type("$A", { delay: 100 });
 
                 const p = editor.locator("p");
                 const span = editor.locator("span");

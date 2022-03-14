@@ -12,7 +12,7 @@ test.describe("Cashtags", async () => {
             }) => {
                 const editor = page.locator("div.tweet-textarea");
 
-                await editor.type("Hello $google@", { delay: 50 });
+                await editor.type("Hello $google@", { delay: 100 });
 
                 const span = editor.locator("span");
 
@@ -26,7 +26,7 @@ test.describe("Cashtags", async () => {
             }) => {
                 const editor = page.locator("div.tweet-textarea");
 
-                await editor.type("Hello $google@amsaid1989", { delay: 50 });
+                await editor.type("Hello $google@amsaid1989", { delay: 100 });
 
                 const span = editor.locator("span");
 
@@ -40,13 +40,13 @@ test.describe("Cashtags", async () => {
             }) => {
                 const editor = page.locator("div.tweet-textarea");
 
-                await editor.type("Hello $google", { delay: 50 });
+                await editor.type("Hello $google", { delay: 100 });
 
                 for (let i = 0; i < 7; i++) {
                     await editor.press("ArrowLeft");
                 }
 
-                await editor.type("@", { delay: 50 });
+                await editor.type("@", { delay: 100 });
 
                 const p = editor.locator("p");
                 const span = editor.locator("span");
@@ -61,7 +61,7 @@ test.describe("Cashtags", async () => {
             }) => {
                 const editor = page.locator("div.tweet-textarea");
 
-                await editor.type("Hello $google", { delay: 50 });
+                await editor.type("Hello $google", { delay: 100 });
 
                 const span = editor.locator("span");
 
@@ -69,7 +69,7 @@ test.describe("Cashtags", async () => {
                     await editor.press("ArrowLeft");
                 }
 
-                await editor.type("@amsaid1989", { delay: 50 });
+                await editor.type("@amsaid1989", { delay: 100 });
 
                 await expect(span).toBeVisible();
                 await expect(await span.count()).toBe(1);

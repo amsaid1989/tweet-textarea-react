@@ -11,7 +11,7 @@ test.describe("Mentions", async () => {
         }) => {
             const editor = page.locator("div.tweet-textarea");
 
-            await editor.type("Hello @amsaid1989", { delay: 50 });
+            await editor.type("Hello @amsaid1989", { delay: 100 });
 
             const span = editor.locator("span");
 
@@ -26,7 +26,7 @@ test.describe("Mentions", async () => {
         }) => {
             const editor = page.locator("div.tweet-textarea");
 
-            await editor.type("Hello @amsaid1989-2022", { delay: 50 });
+            await editor.type("Hello @amsaid1989-2022", { delay: 100 });
 
             const span = editor.locator("span");
 
@@ -41,7 +41,7 @@ test.describe("Mentions", async () => {
         }) => {
             const editor = page.locator("div.tweet-textarea");
 
-            await editor.type("Hello @-amsaid", { delay: 50 });
+            await editor.type("Hello @-amsaid", { delay: 100 });
 
             for (let i = 0; i < 6; i++) {
                 await editor.press("ArrowLeft");

@@ -13,7 +13,7 @@ test.describe("URLs", async () => {
             }) => {
                 const editor = page.locator("div.tweet-textarea");
 
-                await editor.type("hello.com/greetings|hello", { delay: 50 });
+                await editor.type("hello.com/greetings|hello", { delay: 100 });
 
                 const span = editor.locator("span");
 
@@ -28,7 +28,7 @@ test.describe("URLs", async () => {
             }) => {
                 const editor = page.locator("div.tweet-textarea");
 
-                await editor.type("hello.com/greetings,", { delay: 50 });
+                await editor.type("hello.com/greetings,", { delay: 100 });
 
                 const span = editor.locator("span");
 
@@ -43,7 +43,7 @@ test.describe("URLs", async () => {
             }) => {
                 const editor = page.locator("div.tweet-textarea");
 
-                await editor.type("hello.com/greetings,hello", { delay: 50 });
+                await editor.type("hello.com/greetings,hello", { delay: 100 });
 
                 const span = editor.locator("span");
 
@@ -58,7 +58,7 @@ test.describe("URLs", async () => {
             }) => {
                 const editor = page.locator("div.tweet-textarea");
 
-                await editor.type("hello.com/greetings?", { delay: 50 });
+                await editor.type("hello.com/greetings?", { delay: 100 });
 
                 const span = editor.locator("span");
 
@@ -73,7 +73,7 @@ test.describe("URLs", async () => {
             }) => {
                 const editor = page.locator("div.tweet-textarea");
 
-                await editor.type("hello.com/greetings?hello", { delay: 50 });
+                await editor.type("hello.com/greetings?hello", { delay: 100 });
 
                 const span = editor.locator("span");
 

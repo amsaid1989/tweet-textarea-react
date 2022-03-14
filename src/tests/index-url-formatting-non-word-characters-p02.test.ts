@@ -15,7 +15,7 @@ test.describe("URLs", async () => {
 
                 await editor.type(
                     "hello.com/greetings^ hello.com/greetings^testing",
-                    { delay: 50 }
+                    { delay: 100 }
                 );
 
                 const span = editor.locator("span");
@@ -34,7 +34,7 @@ test.describe("URLs", async () => {
 
                 await editor.type(
                     "hello.com/greetings( hello.com/greetings(testing",
-                    { delay: 50 }
+                    { delay: 100 }
                 );
 
                 const span = editor.locator("span");
@@ -53,7 +53,7 @@ test.describe("URLs", async () => {
 
                 await editor.type(
                     "hello.com/greetings) hello.com/greetings)testing",
-                    { delay: 50 }
+                    { delay: 100 }
                 );
 
                 const span = editor.locator("span");
@@ -72,7 +72,7 @@ test.describe("URLs", async () => {
 
                 await editor.type(
                     'hello.com/greetings" hello.com/greetings"testing',
-                    { delay: 50 }
+                    { delay: 100 }
                 );
 
                 const span = editor.locator("span");
@@ -91,7 +91,7 @@ test.describe("URLs", async () => {
 
                 await editor.type(
                     "hello.com/greetings\\ hello.com/greetings\\testing",
-                    { delay: 50 }
+                    { delay: 100 }
                 );
 
                 const span = editor.locator("span");
@@ -110,7 +110,7 @@ test.describe("URLs", async () => {
 
                 await editor.type(
                     "hello.com/greetings< hello.com/greetings<testing",
-                    { delay: 50 }
+                    { delay: 100 }
                 );
 
                 const span = editor.locator("span");

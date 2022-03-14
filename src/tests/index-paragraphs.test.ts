@@ -56,7 +56,7 @@ test.describe("Paragraphs", async () => {
     }) => {
         const editor = page.locator("div.tweet-textarea");
 
-        await editor.type("Hello from TweetTextarea", { delay: 50 });
+        await editor.type("Hello from TweetTextarea", { delay: 100 });
 
         await editor.press("Enter");
 
@@ -72,7 +72,7 @@ test.describe("Paragraphs", async () => {
     }) => {
         const editor = page.locator("div.tweet-textarea");
 
-        await editor.type("Hello from TweetTextarea", { delay: 50 });
+        await editor.type("Hello from TweetTextarea", { delay: 100 });
 
         for (let i = 0; i < 13; i++) {
             await editor.press("ArrowLeft");
@@ -92,7 +92,7 @@ test.describe("Paragraphs", async () => {
     }) => {
         const editor = page.locator("div.tweet-textarea");
 
-        await editor.type("Hello from #100DaysOfCode", { delay: 50 });
+        await editor.type("Hello from #100DaysOfCode", { delay: 100 });
 
         for (let i = 0; i < 10; i++) {
             await editor.press("ArrowLeft");
