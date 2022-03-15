@@ -4,7 +4,7 @@
     "version": "1.0.0",
     "main": "dist/cjs/index.js",
     "module": "dist/esm/index.js",
-    "repository": "https://github.com/amsaid1989/TweetTextarea.git",
+    "repository": "https://github.com/amsaid1989/tweet-textarea-react",
     "author": "Abdelrahman <said.abdelrahman89@gmail.com>",
     "license": "MIT",
     "scripts": {
