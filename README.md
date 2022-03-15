@@ -151,7 +151,7 @@ If you don't want to use `Visual Studio Code`, you will need to configure your o
 
 To test that the component works across different browsers/devices, the project uses Microsoft's [Playrwright](https://playwright.dev/) library. If you would like to learn more about the library and how it works, you can refer to their [official documentation](https://playwright.dev/docs/intro).
 
-To run the tests, you will first need to install the browsers it supports as well as the dependencies needed to run those browsers:
+To run the tests, you will first need to install the browsers supported by `Playwright` as well as the dependencies needed to run those browsers:
 
 ```bash
 # npm
