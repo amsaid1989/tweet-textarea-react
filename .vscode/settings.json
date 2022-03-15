@@ -1,0 +1,21 @@
+{
+    "clangtidy.buildPath": "",
+    "clangtidy.executablePath": "",
+    "clangtidy.outputPath": "",
+    "clangtidy.sourcePath": "",
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "triggerTaskOnSave.tasks": {
+        "npm: build": [
+            "${workspaceFolder}/.vscode/!*.json",
+            "!*.test.ts",
+            "${workspaceFolder}/*.ts",
+            "${workspaceFolder}/*.js",
+            "${workspaceFolder}/*.json",
+            "${workspaceFolder}/src/*.ts",
+            "${workspaceFolder}/src/*.tsx",
+            "${workspaceFolder}/src/**/*.ts",
+            "${workspaceFolder}/src/**/*.tsx",
+            "${workspaceFolder}/src/**/*.css",
+        ]
+    }
+}
