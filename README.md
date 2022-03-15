@@ -182,7 +182,3 @@ If you want to run tests for a specific browser/device or run only specific test
 ## Licence
 
 [MIT](https://mit-license.org/)
-
-## Keywords
-
-[react-component](https://www.npmjs.com/search?q=keywords:react-component) [react](https://www.npmjs.com/search?q=keywords:react) [tweet-textarea](https://www.npmjs.com/search?q=keywords:tweet-textarea)

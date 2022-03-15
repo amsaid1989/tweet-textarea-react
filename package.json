@@ -7,6 +7,12 @@
     "repository": "https://github.com/amsaid1989/tweet-textarea-react",
     "author": "Abdelrahman <said.abdelrahman89@gmail.com>",
     "license": "MIT",
+    "keywords": [
+        "react-component",
+        "react",
+        "tweet-textarea",
+        "tweet-textarea-react"
+    ],
     "scripts": {
         "clean": "rm -rf dist && rm -rf package && cd ../test_app && yarn remove tweet-textarea-react",
         "build": "yarn clean; rollup -c",
