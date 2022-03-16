@@ -12,7 +12,7 @@ The component is built from scratch and it doesn't rely on any dependencies (exc
 
 > `NOTE`
 >
-> The package still hasn't been published to NPM, so you won't be able to use it yet. If you still want to test the component or even use it in your project, please refer to the [Contributing](#Contributing) section to learn how to use the development version of the component.
+> The package still hasn't been published to NPM, so you won't be able to use it yet. If you still want to test the component or even use it in your project, please refer to the [Contributing](#contributing) section to learn how to use the development version of the component.
 
 You can install the component from npm using either `npm` or `yarn`:
 
