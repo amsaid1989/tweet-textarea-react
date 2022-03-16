@@ -27,7 +27,15 @@ import {
 } from "./types";
 
 function formatAfterUserInput(range: Range, pattern: RegExp) {
-    let { node, offset } = getStartNodeAndOffset(range);
+    /**
+     * The main formatting function that handles what happens
+     * when the user types some text into the editor.
+     *
+     * It works by constructing a triplet of nodes from the
+     * current node where the user is adding the text, as well
+     * as the previous and next nodes if they exist.
+     */
+    let { node, offset } = getCurrentNodeAndOffset(range);
 
     if (node === null || offset === null) {
         return;
@@ -38,11 +46,16 @@ function formatAfterUserInput(range: Range, pattern: RegExp) {
     const { node: endNode, offset: endOffset } = end;
 
     if (startNode !== node && startNode.textContent?.length !== undefined) {
-        // Calculating the cursor position. If the previous node
-        // is different from the current node, we add its text
-        // length to the offset already defined.
+        // Get the cursor position. If the previous node is
+        // different from the current node, we add its text
+        // length to the offset already retrieved from the
+        // range.
         offset += startNode.textContent.length;
     }
+
+    /**
+     * Find where the node triplet is in the parent paragraph.
+     */
 
     const parentParagraph = startNode.parentElement;
 
@@ -79,6 +92,18 @@ function formatAfterUserInput(range: Range, pattern: RegExp) {
 }
 
 function formatAfterNewParagraph(range: Range, pattern: RegExp) {
+    /**
+     * Handles formatting the text after the user presses
+     * the Enter key.
+     *
+     * It retrieves the new paragraph that was created as
+     * a result of pressing Enter, as well as the previous
+     * paragraph, removes all formatting from them entirely
+     * to ensure that formatting isn't applied to some text
+     * that shouldn't be formatted, and finally it checks
+     * both paragraphs and formats any text that needs to
+     * be formatted.
+     */
     const currentParagraph = getCurrentParagraph(range);
 
     const previousParagraph = currentParagraph?.previousElementSibling;
@@ -102,11 +127,17 @@ function formatNodeTriplet(
     parentAndOffset: INodeAndOffset,
     nodeTriplet: INodeTriplet
 ): void {
+    /**
+     * Helper function to format a node triplet made of
+     * the current node where the user is adding the text
+     * as well as the nodes before and after it.
+     */
     const { node: parentParagraph, offset: offsetInParent } = parentAndOffset;
     const { active: node, start, end } = nodeTriplet;
     const { node: startNode, offset: startOffset } = start;
     const { node: endNode, offset: endOffset } = end;
 
+    // Select all text in the three nodes and delete it
     range.setStart(startNode, startOffset);
     range.setEnd(endNode, endOffset);
 
@@ -138,6 +169,15 @@ function repositionCursorAfterUserInputFormat(
     paragraphAndOffset: INodeAndOffset,
     offset: number
 ): void {
+    /**
+     * Resets the cursor position to where it was in the text
+     * before the formatting was applied.
+     *
+     * It goes over the nodes that were added during the formatting
+     * adding the length of each one of them until it reaches a node
+     * that makes the length longer than the offset provided to
+     * the function. It set the cursor to that node.
+     */
     const { node: parentParagraph, offset: offsetInParent } =
         paragraphAndOffset;
 
@@ -172,6 +212,19 @@ function format(
     pattern: RegExp,
     finalNode?: Element
 ): void {
+    /**
+     * The function that actually matches the text against the regex
+     * pattern and applies the formatting to the text.
+     *
+     * It gets all matches in the text, then applies formatting to
+     * each one of them in reverse order.
+     *
+     * The reason why the formatting should be applied in reverse
+     * is because that formatting them the other way around would
+     * make the indices calculated by the matchAll function invalid,
+     * making it necessary to run the match function again on the
+     * text that hasn't been formatted yet.
+     */
     const matches = textNode.textContent?.matchAll(pattern);
 
     if (matches) {
@@ -204,6 +257,11 @@ function format(
 }
 
 function prepParagraphForReformatting(range: Range, paragraph: Element): Text {
+    /**
+     * Prepares a paragraph node for reformatting by removing
+     * all child nodes from the paragraph and adding the text
+     * as a plain text node with no formatting.
+     */
     range.selectNodeContents(paragraph);
 
     const text = range.toString();
@@ -234,6 +292,17 @@ function insertParagraphOnEmptyEditor(
     editor: HTMLDivElement,
     keyboardKey: string
 ): void {
+    /**
+     * Inserts a paragraph when the user first starts typing
+     * in the editor.
+     *
+     * If the user typed some text, then only 1 paragraph
+     * would be added containing the text that the user
+     * added.
+     *
+     * If the user pressed the Enter key, 2 paragraphs would
+     * be added with no text in any of them.
+     */
     const sel = document.getSelection();
 
     if (!sel) {
@@ -269,6 +338,14 @@ function insertParagraphOnEmptyEditor(
 }
 
 function pasteTextInEmptyEditor(editor: HTMLDivElement, textNode: Text): void {
+    /**
+     * Handles pasting text in an empty editor. In this case, the text
+     * initially gets pasted in a text node that is an immediate child
+     * of the editor node.
+     *
+     * The function takes that text node and adds it as a child inside
+     * a paragraph node.
+     */
     const sel = document.getSelection();
 
     if (!sel) {
@@ -290,6 +367,10 @@ function pasteTextInEmptyEditor(editor: HTMLDivElement, textNode: Text): void {
 }
 
 function addNonBreakingSpace(range: Range, node: Node): void {
+    /**
+     * Adds a text node with a non-breaking space character
+     * after a formatted span element.
+     */
     const spanElement = node.parentElement;
 
     if (!spanElement || !spanElement.parentElement) {
@@ -332,6 +413,10 @@ function isDeletionEvent(inputType: string): boolean {
 }
 
 function setCursorPosition(node: Node, offset: number): void {
+    /**
+     * Sets the start container of the range and collapses
+     * the range to the start.
+     */
     const sel = document.getSelection();
 
     if (!sel) {
@@ -353,6 +438,12 @@ function setCursorPosition(node: Node, offset: number): void {
 }
 
 function findNodeInParent(parent: Node, node: Node): number | undefined {
+    /**
+     * Iterates over all child nodes of the parent looking
+     * for the node.
+     *
+     * Returns the index of the node if found or undefined.
+     */
     let offsetInParent: number | undefined;
 
     for (let i = 0; i < parent.childNodes.length; i++) {
@@ -367,15 +458,29 @@ function findNodeInParent(parent: Node, node: Node): number | undefined {
     return offsetInParent;
 }
 
-function getStartNodeAndOffset(
+function getCurrentNodeAndOffset(
     range: Range
 ): INodeAndOffset | INullNodeAndOffset {
+    /**
+     * Calculates the current node from the start container
+     * of the range.
+     *
+     * The start container is the node where the user is
+     * adding the text.
+     *
+     * If the text node is the immediate child of the
+     * paragraph, then it returns the text node as
+     * the current node.
+     *
+     * Otherwise, it finds the immediate child of the
+     * paragraph and returns it.
+     */
     let node = range.startContainer as Element;
     let offset = range.startOffset;
 
     if (node.tagName === "P") {
         /**
-         * Addresses a behavior where if a user deletes
+         * Addresses a behavior where if the user deletes
          * the last character in a text node, the node
          * will be automatically deleted making the
          * parent paragraph the startContainer of the
@@ -403,6 +508,14 @@ function getStartNodeAndOffset(
         }
 
         if (node.textContent?.length !== undefined) {
+            /**
+             * In the case where startContainer is the paragraph,
+             * we need to set the offset to the end of the text
+             * node after we get it because the original offset
+             * was for the location of the node in the parent
+             * paragraph rather than the cursor position in the
+             * text.
+             */
             offset = node.textContent.length;
         }
 
@@ -423,6 +536,10 @@ function getStartNodeAndOffset(
 }
 
 function getStartAndEnd(currentNode: Element): IRangeStartAndEnd {
+    /**
+     * Calculate the previous and next nodes based on
+     * the current node.
+     */
     const prevNode =
         currentNode.previousSibling || currentNode.previousElementSibling;
     let nextNode = currentNode.nextSibling || currentNode.nextElementSibling;

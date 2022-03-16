@@ -46,7 +46,7 @@ function textareaBeforeInputListener(
     ) {
         /**
          * If the user has all the text in the editor selected and they
-         * type something, then all the text and the child node of the
+         * type something, then all the text and the child nodes of the
          * editor will be removed first, before the new text is added.
          */
         textareaUtils.deleteAllEditorChildren(editorRef.current);
@@ -54,7 +54,7 @@ function textareaBeforeInputListener(
 
     if (editorRef.current?.childNodes.length === 0) {
         /**
-         * Handles the special case where no child node exist in the
+         * Handles the special case where no child node exists in the
          * editor and the user types something. In this case, we want
          * a paragraph to be created first, so the text ends up added
          * to the paragraph rather than as an immediate child to
@@ -80,6 +80,11 @@ function textareaBeforeInputListener(
          * Handles when user inputs a Space character by converting
          * the input using the unicode literal for the non-breaking
          * space.
+         *
+         * This is mainly to avoid an issue with Firefox where the
+         * user would add a space character at the end of a formatted
+         * node would sometimes get deleted, causing issues with
+         * the formatting.
          */
         let node = range.startContainer;
         const { startOffset } = range;

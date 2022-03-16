@@ -29,6 +29,11 @@ function patternFromString(str: string): RegExp {
 }
 
 function initPattern() {
+    /**
+     * Retrieves the list of the top-level domains and uses it to construct
+     * the regex pattern that is used for the formatting. It returns the pattern
+     * in a promise that resolves once fetching the domains list is complete.
+     */
     return new Promise<RegExp>((resolve, reject) => {
         fetch("https://data.iana.org/TLD/tlds-alpha-by-domain.txt")
             .then((response) => response.text())

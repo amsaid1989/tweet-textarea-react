@@ -1,36 +1,53 @@
 Arguments: 
-  /usr/bin/node /home/abdelrahman/.yarn/bin/yarn.js pack --prod
+  /usr/bin/node /home/abdelrahman/.yarn/bin/yarn.js publish --prod
 
 PATH: 
-  /tmp/yarn--1645396818943-0.008259037610753861:/home/abdelrahman/Sources/dev/tweet_textarea/tweet_textarea_component/node_modules/.bin:/home/abdelrahman/.config/yarn/link/node_modules/.bin:/usr/libexec/lib/node_modules/npm/bin/node-gyp-bin:/usr/lib/node_modules/npm/bin/node-gyp-bin:/usr/bin/node_modules/npm/bin/node-gyp-bin:/tmp/yarn--1645396818578-0.3789753469669843:/home/abdelrahman/Sources/dev/tweet_textarea/tweet_textarea_component/node_modules/.bin:/home/abdelrahman/.config/yarn/link/node_modules/.bin:/usr/libexec/lib/node_modules/npm/bin/node-gyp-bin:/usr/lib/node_modules/npm/bin/node-gyp-bin:/usr/bin/node_modules/npm/bin/node-gyp-bin:/tmp/yarn--1645396805664-0.071472907728507:/home/abdelrahman/Sources/dev/tweet_textarea/tweet_textarea_component/node_modules/.bin:/home/abdelrahman/.config/yarn/link/node_modules/.bin:/usr/libexec/lib/node_modules/npm/bin/node-gyp-bin:/usr/lib/node_modules/npm/bin/node-gyp-bin:/usr/bin/node_modules/npm/bin/node-gyp-bin:/opt/python/bin:/home/abdelrahman/Sources/deckboard:/home/abdelrahman/Sources/netbeans/bin:/home/abdelrahman/Sources/bin:/home/abdelrahman/Sources/ExifTool/ExifTool_latest:/home/abdelrahman/Sources/ffmpeg_static:/home/abdelrahman/Sources/Godot:/home/abdelrahman/.emacs.d/bin:/home/abdelrahman/cdtdebugger:/home/abdelrahman/.cargo/bin:/home/abdelrahman/Sources/robo3t/bin:/home/abdelrahman/Sources/codeblocks/build/bin:/home/abdelrahman/Sources/armorpaint:/home/abdelrahman/Sources/shell_scripts/image_downloader:/home/abdelrahman/Sources/shell_scripts:/usr/local/go/bin:/opt/ArgyllCMS/bin:/home/abdelrahman/Sources/blender/blender-2.91.0-linux64:/opt/gaffer/bin:/home/abdelrahman/Sources/REAPER:/opt/resolve/bin:/home/abdelrahman/Sources/pypy/bin:/home/abdelrahman/.fzf/bin:/home/abdelrahman/.yarn/bin:/opt/python/bin:/home/abdelrahman/Sources/deckboard:/home/abdelrahman/Sources/netbeans/bin:/home/abdelrahman/Sources/bin:/home/abdelrahman/Sources/ExifTool/ExifTool_latest:/home/abdelrahman/Sources/ffmpeg_static:/home/abdelrahman/Sources/Godot:/home/abdelrahman/.emacs.d/bin:/home/abdelrahman/cdtdebugger:/home/abdelrahman/.cargo/bin:/home/abdelrahman/Sources/robo3t/bin:/home/abdelrahman/Sources/codeblocks/build/bin:/home/abdelrahman/Sources/armorpaint:/home/abdelrahman/Sources/shell_scripts/image_downloader:/home/abdelrahman/Sources/shell_scripts:/usr/local/go/bin:/opt/ArgyllCMS/bin:/home/abdelrahman/Sources/blender/blender-2.91.0-linux64:/opt/gaffer/bin:/home/abdelrahman/Sources/REAPER:/opt/resolve/bin:/home/abdelrahman/Sources/pypy/bin:/home/abdelrahman/.cargo/bin:/home/abdelrahman/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/abdelrahman/.komodoide/12.0/XRE/state:/home/abdelrahman/.local/bin:/home/abdelrahman/.local/bin
+  /home/abdelrahman/.fzf/bin:/home/abdelrahman/.yarn/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/home/abdelrahman/.local/bin:/home/abdelrahman/.local/bin
 
 Yarn version: 
   1.22.17
 
 Node version: 
-  16.14.0
+  14.18.3
 
 Platform: 
   linux x64
 
 Trace: 
-  Error: ENOENT: no such file or directory, lstat '/home/abdelrahman/Sources/dev/tweet_textarea/tweet_textarea_component/tweet-textarea-react-v1.0.0.tgz'
+  Error: https://registry.yarnpkg.com/-/user/org.couchdb.user:amsaid1989: failed to authenticate: Could not authenticate amsaid1989: bad password
+      at Request.params.callback [as _callback] (/home/abdelrahman/.yarn/lib/cli.js:67029:18)
+      at Request.self.callback (/home/abdelrahman/.yarn/lib/cli.js:140883:22)
+      at Request.emit (events.js:400:28)
+      at Request.<anonymous> (/home/abdelrahman/.yarn/lib/cli.js:141855:10)
+      at Request.emit (events.js:400:28)
+      at IncomingMessage.<anonymous> (/home/abdelrahman/.yarn/lib/cli.js:141777:12)
+      at Object.onceWrapper (events.js:519:28)
+      at IncomingMessage.emit (events.js:412:35)
+      at endReadableNT (internal/streams/readable.js:1334:12)
+      at processTicksAndRejections (internal/process/task_queues.js:82:21)
 
 npm manifest: 
   {
       "name": "tweet-textarea-react",
+      "description": "A simple React component that replicates the behaviour of Twitter's tweet input area",
       "version": "1.0.0",
       "main": "dist/cjs/index.js",
       "module": "dist/esm/index.js",
-      "repository": "https://github.com/amsaid1989/TweetTextarea.git",
+      "repository": "https://github.com/amsaid1989/tweet-textarea-react",
       "author": "Abdelrahman <said.abdelrahman89@gmail.com>",
       "license": "MIT",
+      "keywords": [
+          "react-component",
+          "react",
+          "tweet-textarea",
+          "tweet-textarea-react"
+      ],
       "scripts": {
           "clean": "rm -rf dist && rm -rf package && cd ../test_app && yarn remove tweet-textarea-react",
           "build": "yarn clean; rollup -c",
           "packBuild": "yarn pack --prod && tar -xzvf *.tgz && rm *.tgz",
           "prepPackage": "sed -i '/\"devDependencies\": {/,/},/d' package/package.json",
-          "installPackage": "cd ../test_app && yarn add ../tweet_textarea_component/package",
+          "installPackage": "cd ../test_app && yarn add ../tweet-textarea-react/package",
           "createPackage": "yarn packBuild && yarn prepPackage && yarn installPackage",
           "test": "playwright test"
       },
