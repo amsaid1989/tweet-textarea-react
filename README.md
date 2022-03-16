@@ -10,6 +10,10 @@ The component is built from scratch and it doesn't rely on any dependencies (exc
 
 ## Installation
 
+> NOTE
+>
+> The package still hasn't been published to NPM, so you won't be able to use it yet.
+
 You can install the component from npm using either `npm` or `yarn`:
 
 ```bash
