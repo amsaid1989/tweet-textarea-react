@@ -1,4 +1,5 @@
 .markdownlint.json
+yarn-error.log
 expected_behavior_completed_tests.md
 dist
 node_modules
