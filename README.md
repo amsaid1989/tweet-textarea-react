@@ -10,7 +10,7 @@ The component is built from scratch and it doesn't rely on any dependencies (exc
 
 ## Installation
 
-> NOTE
+> `NOTE`
 >
 > The package still hasn't been published to NPM, so you won't be able to use it yet.
 
