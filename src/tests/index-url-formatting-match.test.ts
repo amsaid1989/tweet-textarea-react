@@ -18,7 +18,6 @@ test.describe("URLs", async () => {
             await expect(span).toBeVisible();
             await expect(await span.count()).toBe(1);
             await expect(span).toHaveText("hello.com");
-            await expect(span).toHaveClass("highlight");
         });
 
         test("http and https are allowed as part of the URL", async ({
@@ -51,7 +50,6 @@ test.describe("URLs", async () => {
             await expect(span).toBeVisible();
             await expect(await span.count()).toBe(1);
             await expect(span).toHaveText("www.hello.com");
-            await expect(span).toHaveClass("highlight");
         });
 
         test("Subdomains should be allowed and highlighted as part of the URL", async ({
@@ -66,7 +64,6 @@ test.describe("URLs", async () => {
             await expect(span).toBeVisible();
             await expect(await span.count()).toBe(1);
             await expect(span).toHaveText("test.hello.com");
-            await expect(span).toHaveClass("highlight");
         });
 
         test("Dots and hyphens are allowed in the top level domain part", async ({
@@ -81,7 +78,6 @@ test.describe("URLs", async () => {
             await expect(span).toBeVisible();
             await expect(await span.count()).toBe(1);
             await expect(span).toHaveText("the-wizard-apprentice.com");
-            await expect(span).toHaveClass("highlight");
         });
 
         test("Subdirectories should be allowed and highlighted as part of a URL", async ({
@@ -96,7 +92,6 @@ test.describe("URLs", async () => {
             await expect(span).toBeVisible();
             await expect(await span.count()).toBe(1);
             await expect(span).toHaveText("hello.com/greetings");
-            await expect(span).toHaveClass("highlight");
         });
 
         test("All word characters and some non-word characters should be allowed in the subdirectory part of the URL", async ({
@@ -115,7 +110,6 @@ test.describe("URLs", async () => {
             await expect(span).toHaveText(
                 "hello.com/greeting&salutations$hi%test.html"
             );
-            await expect(span).toHaveClass("highlight");
         });
 
         test("If the user erases characters from a string that is not highlighted as URL, making it match the URL pattern, then it will be highlighted", async ({
@@ -136,7 +130,6 @@ test.describe("URLs", async () => {
             await expect(span).toBeVisible();
             await expect(await span.count()).toBe(1);
             await expect(span).toHaveText("hello.com");
-            await expect(span).toHaveClass("highlight");
         });
     });
 });

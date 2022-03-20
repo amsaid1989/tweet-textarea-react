@@ -18,7 +18,6 @@ test.describe("Mentions", async () => {
             await expect(span).toBeVisible();
             await expect(await span.count()).toBe(1);
             await expect(span).toHaveText("@amsaid1989");
-            await expect(span).toHaveClass("highlight");
         });
 
         test("When the user adds a non-word character after a sequence of word characters that match the mention pattern, then the formatting should stop before the non-word character", async ({
@@ -33,7 +32,6 @@ test.describe("Mentions", async () => {
             await expect(span).toBeVisible();
             await expect(await span.count()).toBe(1);
             await expect(span).toHaveText("@amsaid1989");
-            await expect(span).toHaveClass("highlight");
         });
 
         test("If the user erases characters from a string that doesn't match the mention pattern, making it match, then the text should be highlighted", async ({
@@ -54,7 +52,6 @@ test.describe("Mentions", async () => {
             await expect(span).toBeVisible();
             await expect(await span.count()).toBe(1);
             await expect(span).toHaveText("@amsaid");
-            await expect(span).toHaveClass("highlight");
         });
     });
 });

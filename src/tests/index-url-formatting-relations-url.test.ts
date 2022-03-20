@@ -19,7 +19,6 @@ test.describe("URLs", async () => {
                 await expect(span).toBeVisible();
                 await expect(await span.count()).toBe(1);
                 await expect(span).toHaveText("google.comtwitter.com");
-                await expect(span).toHaveClass("highlight");
             });
 
             test("If we have two URLs, with the first one including the protocol, sitting next to each other with nothing separating them, then they will be highlighted as 1 URL", async ({
@@ -36,7 +35,6 @@ test.describe("URLs", async () => {
                 await expect(span).toBeVisible();
                 await expect(await span.count()).toBe(1);
                 await expect(span).toHaveText("https://google.comtwitter.com");
-                await expect(span).toHaveClass("highlight");
             });
 
             test("If we have two URLs, with both including the protocol, sitting next to each other with nothing separating them, then none of them will be highlighted", async ({

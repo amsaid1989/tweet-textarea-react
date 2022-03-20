@@ -19,7 +19,6 @@ test.describe("Mentions", async () => {
                 await expect(span).toBeVisible();
                 await expect(await span.count()).toBe(1);
                 await expect(span).toHaveText("@amsaid1989");
-                await expect(span).toHaveClass("highlight");
             });
 
             test("If the user types a valid hashtag after a highlighted mention, then the highlighting will be maintained", async ({
@@ -36,7 +35,6 @@ test.describe("Mentions", async () => {
                 await expect(span).toBeVisible();
                 await expect(await span.count()).toBe(1);
                 await expect(span).toHaveText("@amsaid1989");
-                await expect(span).toHaveClass("highlight");
             });
 
             test("If the user types the # character immediately before a highlighted mention, with no characters separating them, then the highlighting will be removed", async ({
@@ -78,7 +76,6 @@ test.describe("Mentions", async () => {
                 await expect(span).toBeVisible();
                 await expect(await span.count()).toBe(1);
                 await expect(span).toHaveText("#100Days");
-                await expect(span).toHaveClass("highlight");
             });
         });
     });

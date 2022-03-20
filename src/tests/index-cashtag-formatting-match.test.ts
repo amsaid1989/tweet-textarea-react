@@ -18,7 +18,6 @@ test.describe("Cashtags", async () => {
             await expect(span).toBeVisible();
             await expect(await span.count()).toBe(1);
             await expect(span).toHaveText("$google");
-            await expect(span).toHaveClass("highlight");
         });
 
         test("A suffix made of an underscore and a maximum of two alphabetical characters is allowed and should be highlighted", async ({
@@ -33,7 +32,6 @@ test.describe("Cashtags", async () => {
             await expect(span).toBeVisible();
             await expect(await span.count()).toBe(1);
             await expect(span).toHaveText("$google_uk");
-            await expect(span).toHaveClass("highlight");
         });
 
         test("If the suffix doesn't match the rules, then only the cashtag part will be highlighted", async ({
@@ -48,7 +46,6 @@ test.describe("Cashtags", async () => {
             await expect(span).toBeVisible();
             await expect(await span.count()).toBe(1);
             await expect(span).toHaveText("$google");
-            await expect(span).toHaveClass("highlight");
         });
 
         test("When the user adds a non-word character after a sequence of word characters that match the cashtag pattern, then the formatting should stop before the non-word character", async ({
@@ -63,7 +60,6 @@ test.describe("Cashtags", async () => {
             await expect(span).toBeVisible();
             await expect(await span.count()).toBe(1);
             await expect(span).toHaveText("$google");
-            await expect(span).toHaveClass("highlight");
         });
 
         test("If the user erases characters from a string that doesn't match the cashtag pattern, making it match, then the text should be highlighted", async ({
@@ -82,7 +78,6 @@ test.describe("Cashtags", async () => {
             await expect(span).toBeVisible();
             await expect(await span.count()).toBe(1);
             await expect(span).toHaveText("$google");
-            await expect(span).toHaveClass("highlight");
         });
     });
 });

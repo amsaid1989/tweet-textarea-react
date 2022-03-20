@@ -19,7 +19,6 @@ test.describe("URLs", async () => {
                 await expect(span).toBeVisible();
                 await expect(await span.count()).toBe(1);
                 await expect(span).toHaveText("hello.com");
-                await expect(span).toHaveClass("highlight");
             });
 
             test("If we add the $ character before a highlighted URL that doesn't include the protocol, then the highlighting of the URL will be removed", async ({
@@ -40,7 +39,6 @@ test.describe("URLs", async () => {
                 await expect(span).toBeVisible();
                 await expect(await span.count()).toBe(1);
                 await expect(span).toHaveText("$google");
-                await expect(span).toHaveClass("highlight");
             });
 
             test("If we add a cashtag before a highlighted URL that doesn't include the protocol, then the highlighting of the URL will be removed", async ({
@@ -82,7 +80,6 @@ test.describe("URLs", async () => {
                 await expect(span).toBeVisible();
                 await expect(await span.count()).toBe(1);
                 await expect(span).toHaveText("$https");
-                await expect(span).toHaveClass("highlight");
             });
 
             test("If we add a cashtag before a highlighted URL that includes the protocol, then the highlighting of the URL will be removed, but if the first part still constitues a valid cashtag, it will be highlighted", async ({
@@ -104,7 +101,6 @@ test.describe("URLs", async () => {
                 await expect(span).toBeVisible();
                 await expect(await span.count()).toBe(1);
                 await expect(span).toHaveText("$Ahttps");
-                await expect(span).toHaveClass("highlight");
             });
         });
     });

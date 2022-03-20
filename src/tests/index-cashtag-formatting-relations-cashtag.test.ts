@@ -40,7 +40,6 @@ test.describe("Cashtags", async () => {
                 await expect(span).toBeVisible();
                 await expect(await span.count()).toBe(1);
                 await expect(span).toHaveText("$google");
-                await expect(span).toHaveClass("highlight");
             });
 
             test("If we have multiple cashtags one after the other, with no non-word characters separating them, then only the first of them will be highlighted", async ({
@@ -55,7 +54,6 @@ test.describe("Cashtags", async () => {
                 await expect(span).toBeVisible();
                 await expect(await span.count()).toBe(1);
                 await expect(span).toHaveText("$AMZN");
-                await expect(span).toHaveClass("highlight");
             });
         });
     });

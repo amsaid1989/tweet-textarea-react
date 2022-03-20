@@ -34,7 +34,6 @@ test.describe("URLs", async () => {
                 await expect(span).toBeVisible();
                 await expect(await span.count()).toBe(1);
                 await expect(span).toHaveText("hello.co");
-                await expect(span).toHaveClass("highlight");
             });
 
             test("If we add the @ character before a highlighted URL that doesn't include the protocol, then the highlighting of the URL will be removed", async ({
@@ -55,7 +54,6 @@ test.describe("URLs", async () => {
                 await expect(span).toBeVisible();
                 await expect(await span.count()).toBe(1);
                 await expect(span).toHaveText("@google");
-                await expect(span).toHaveClass("highlight");
             });
 
             test("If we add a user mention before a highlighted URL that doesn't include the protocol, then the highlighting of the URL will be removed", async ({
@@ -76,7 +74,6 @@ test.describe("URLs", async () => {
                 await expect(span).toBeVisible();
                 await expect(await span.count()).toBe(1);
                 await expect(span).toHaveText("@amsaid1989google");
-                await expect(span).toHaveClass("highlight");
             });
 
             test("If we add the @ character before a highlighted URL that includes the protocol, then nothing will be highlighted", async ({

@@ -19,7 +19,6 @@ test.describe("Hashtags", async () => {
                 await expect(span).toBeVisible();
                 await expect(await span.count()).toBe(1);
                 await expect(span).toHaveText("#100DaysOfCode");
-                await expect(span).toHaveClass("highlight");
             });
 
             test("If the user types a valid user mention after a highlighted hashtag, then the highlighting will be maintained", async ({
@@ -36,7 +35,6 @@ test.describe("Hashtags", async () => {
                 await expect(span).toBeVisible();
                 await expect(await span.count()).toBe(1);
                 await expect(span).toHaveText("#100DaysOfCode");
-                await expect(span).toHaveClass("highlight");
             });
 
             test("If the user types the @ character immediately before a highlighted hashtag, with no characters separating them, then the highlighting will be maintained", async ({
@@ -57,7 +55,6 @@ test.describe("Hashtags", async () => {
                 await expect(span).toBeVisible();
                 await expect(await span.count()).toBe(1);
                 await expect(span).toHaveText("#100days");
-                await expect(span).toHaveClass("highlight");
             });
 
             test("If the user types the @ character, followed by other word characters, immediately before a highlighted hashtag, with no characters separating them, then the highlighting will be removed", async ({
@@ -78,7 +75,6 @@ test.describe("Hashtags", async () => {
                 await expect(span).toBeVisible();
                 await expect(await span.count()).toBe(1);
                 await expect(span).toHaveText("@amsaid1989");
-                await expect(span).toHaveClass("highlight");
             });
         });
     });

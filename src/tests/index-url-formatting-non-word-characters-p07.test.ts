@@ -20,7 +20,6 @@ test.describe("URLs", async () => {
                 await expect(span).toBeVisible();
                 await expect(await span.count()).toBe(1);
                 await expect(span).toHaveText("hello.com/greetings|hello");
-                await expect(span).toHaveClass("highlight");
             });
 
             test("If the subdirectory part of the URL ends with the , character, then the highlighting will only apply to everything before the , character", async ({
@@ -35,7 +34,6 @@ test.describe("URLs", async () => {
                 await expect(span).toBeVisible();
                 await expect(await span.count()).toBe(1);
                 await expect(span).toHaveText("hello.com/greetings");
-                await expect(span).toHaveClass("highlight");
             });
 
             test("If the subdirectory part of the URL includes the , character but not at the end, then the , character will be included in the highlighting", async ({
@@ -50,7 +48,6 @@ test.describe("URLs", async () => {
                 await expect(span).toBeVisible();
                 await expect(await span.count()).toBe(1);
                 await expect(span).toHaveText("hello.com/greetings,hello");
-                await expect(span).toHaveClass("highlight");
             });
 
             test("If the subdirectory part of the URL ends with the ? character, then the highlighting will only apply to everything before the ? character", async ({
@@ -65,7 +62,6 @@ test.describe("URLs", async () => {
                 await expect(span).toBeVisible();
                 await expect(await span.count()).toBe(1);
                 await expect(span).toHaveText("hello.com/greetings");
-                await expect(span).toHaveClass("highlight");
             });
 
             test("If the subdirectory part of the URL includes the ? character but not at the end, then the ? character will be included in the highlighting", async ({
@@ -80,7 +76,6 @@ test.describe("URLs", async () => {
                 await expect(span).toBeVisible();
                 await expect(await span.count()).toBe(1);
                 await expect(span).toHaveText("hello.com/greetings?hello");
-                await expect(span).toHaveClass("highlight");
             });
         }
     );

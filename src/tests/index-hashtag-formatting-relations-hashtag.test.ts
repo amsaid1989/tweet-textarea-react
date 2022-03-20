@@ -26,7 +26,6 @@ test.describe("Hashtags", async () => {
                 await expect(span).toBeVisible();
                 await expect(await span.count()).toBe(1);
                 await expect(span).toHaveText("#100days");
-                await expect(span).toHaveClass("highlight");
             });
 
             test("If the user types the # character, followed by other word characters, immediately before a highlighted hashtag, with no characters separating them, then the highlighting will be removed", async ({
