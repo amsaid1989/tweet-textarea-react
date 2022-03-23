@@ -42,7 +42,7 @@ function App() {
 }
 ```
 
-The `TweetTextarea` component supports all attributes that are supported by the `div` element, except for the ones that are required for the component to work. These are the `ref`, `contentEditable`, `onBeforeInput` and `onInput` attributes. If you try to pass any of these attributes, then your React app will probably not compile if you are using `TypeScript`, or your attributes will be overridden if you are using `JavaScript`.
+The `TweetTextarea` component supports all attributes that are supported by the `div` element, except for `contentEditable` which is required for the component to work. If you try to pass `contentEditable` to the component, then your React app will probably not compile if you are using `TypeScript`, or your attribute will be overridden if you are using `JavaScript`.
 
 The component comes with two sets of default styles applied. The first defines what the textarea itself looks like. This can be overridden by passing a custom class when using the component.
 
@@ -52,7 +52,13 @@ function App() {
 }
 ```
 
-The second default style is the one that defines how URLs, hashtags, etc. will be highlighted. Currently, the component doesn't support overriding this style. However, this will be implemented soon.
+The second default style is the one that defines how URLs, hashtags, etc. will be highlighted. This can be overridden by passing a class name to the `highlightClassName` attribute.
+
+```javascript
+function App() {
+    return <TweetTextarea highlightClassName="custom-highlight" />;
+}
+```
 
 ## Contributing
 
@@ -145,6 +151,10 @@ Although the component uses [rollup](https://www.rollupjs.org/guide/en/) for bun
 
 Therefore, the project currently relies on a [Visual Studio Code](https://code.visualstudio.com/) task to build the code. To trigger this task automatically, the project currently relies on the [Trigger Task on Save](https://open-vsx.org/extension/Gruntfuggly/triggertaskonsave) extension. If you would like to build the component automatically every time you make a change to it, you will need to use `Visual Studio Code` and the `Trigger Task on Save` extension. The configuration for the task and how to trigger it is already provided in the repository, so it should work out of the box once you install the extension.
 
+> `NOTE`
+>
+> Using the `Trigger Task on Save` with `Visual Studio Code` is not very robust. Sometimes building the component would fail. In this case, you will need to build the component again. Usually, it succeeds on the second time.
+
 If you don't want to use `Visual Studio Code`, you will need to configure your own text editor/IDE to achieve the same result.
 
 ## Testing
@@ -174,7 +184,7 @@ yarn test
 ```
 
 > `NOTE`
-> 
+>
 > This will run all tests across all browsers and devices, which means it will take a little bit of time to finish running all the tests.
 
 If you want to run tests for a specific browser/device or run only specific tests, please refer to the [Playwright documentation](https://playwright.dev/docs/intro#command-line) and to the [project's Playwright configuration](./playwright.config.ts) for the supported browsers/devices.

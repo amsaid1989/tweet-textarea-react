@@ -19,78 +19,119 @@
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, forwardRef } from "react";
 import patterns from "./lib/patterns";
 import textareaListeners from "./lib/textareaListeners";
 import "./static/editorStyles.css";
 
 const STORAGE_KEY = "highlightPattern";
 
-interface highlightStyle {
+interface TweetTextareaProps
+    extends Omit<React.HTMLAttributes<HTMLDivElement>, "contentEditable"> {
     highlightClassName?: string;
 }
 
-type TweetTextareaProps = Omit<
-    React.HTMLAttributes<HTMLDivElement>,
-    "ref" | "onBeforeInput" | "onInput" | "contentEditable"
-> &
-    highlightStyle;
+const TweetTextarea = forwardRef<HTMLDivElement | null, TweetTextareaProps>(
+    (
+        { highlightClassName, ...htmlDivAttributes }: TweetTextareaProps,
+        ref: React.ForwardedRef<HTMLDivElement>
+    ): JSX.Element => {
+        const editorRef = useRef<HTMLDivElement | null>(null);
 
-export default function TweetTextarea(props: TweetTextareaProps): JSX.Element {
-    const editorRef = useRef<HTMLDivElement | null>(null);
+        const [pattern, setPattern] = useState<RegExp | null>(null);
 
-    const [pattern, setPattern] = useState<RegExp | null>(null);
+        // Get pattern from storage and run the get pattern function on load
+        useEffect(() => {
+            // TODO (Abdelrahman): Look into testing for the availability
+            // of localStorage before trying to use it.
+            const storage = window.localStorage;
+            const storedPattern = storage.getItem(STORAGE_KEY);
 
-    // Get pattern from storage and run the get pattern function on load
-    useEffect(() => {
-        // TODO (Abdelrahman): Look into testing for the availability
-        // of localStorage before trying to use it.
-        const storage = window.localStorage;
-        const storedPattern = storage.getItem(STORAGE_KEY);
+            // Use the locally stored pattern if it exists while the
+            // componenet fetches the updated list of top-level
+            // domains
+            if (storedPattern && storedPattern.trim() !== "") {
+                setPattern(patterns.patternFromString(storedPattern));
+            }
 
-        // Use the locally stored pattern if it exists while the
-        // componenet fetches the updated list of top-level
-        // domains
-        if (storedPattern && storedPattern.trim() !== "") {
-            setPattern(patterns.patternFromString(storedPattern));
-        }
+            patterns
+                .initPattern()
+                .then((highlightPattern) => {
+                    storage.setItem(STORAGE_KEY, highlightPattern.source);
 
-        patterns
-            .initPattern()
-            .then((highlightPattern) => {
-                storage.setItem(STORAGE_KEY, highlightPattern.source);
+                    setPattern(highlightPattern);
+                })
+                .catch((err) => console.error(err));
+        }, []);
 
-                setPattern(highlightPattern);
-            })
-            .catch((err) => console.error(err));
-    }, []);
+        // Updated user defined ref whenever the internal ref updates
+        useEffect(() => {
+            if (ref) {
+                if (typeof ref === "function") {
+                    ref(editorRef.current);
+                } else {
+                    // Cast ref to a MutableRefObject, otherwise we won't
+                    // be able to update its 'current' property
+                    (
+                        ref as React.MutableRefObject<HTMLDivElement | null>
+                    ).current = editorRef.current;
+                }
+            }
+        }, [editorRef.current]);
 
-    /* EVENT LISTENERS */
-    const beforeInputListener = (event: React.FormEvent<HTMLDivElement>) => {
-        if (!editorRef) {
-            return;
-        }
+        /* EVENT LISTENERS */
+        const beforeInputListener = (
+            event: React.FormEvent<HTMLDivElement>
+        ) => {
+            if (
+                htmlDivAttributes.onBeforeInput &&
+                typeof htmlDivAttributes.onBeforeInput === "function"
+            ) {
+                htmlDivAttributes.onBeforeInput(event);
+            }
 
-        textareaListeners.textareaBeforeInputListener(event, editorRef);
-    };
+            if (!editorRef) {
+                return;
+            }
 
-    const inputListener = (event: React.FormEvent<HTMLDivElement>) => {
-        if (!editorRef || !pattern) {
-            return;
-        }
+            textareaListeners.textareaBeforeInputListener(event, editorRef);
+        };
 
-        textareaListeners.textareaInputListener(event, editorRef, pattern);
-    };
-    /* END EVENT LISTENERS */
+        const inputListener = (event: React.FormEvent<HTMLDivElement>) => {
+            if (
+                htmlDivAttributes.onInput &&
+                typeof htmlDivAttributes.onInput === "function"
+            ) {
+                htmlDivAttributes.onInput(event);
+            }
 
-    return (
-        <div
-            {...props}
-            className={props.className || "tweet-textarea"}
-            ref={editorRef}
-            onBeforeInput={beforeInputListener}
-            onInput={inputListener}
-            contentEditable
-        />
-    );
-}
+            if (!editorRef || !pattern) {
+                return;
+            }
+
+            textareaListeners.textareaInputListener(
+                event,
+                editorRef,
+                pattern,
+                highlightClassName
+            );
+        };
+        /* END EVENT LISTENERS */
+
+        return (
+            <div
+                {...htmlDivAttributes}
+                className={`tweet-textarea ${
+                    htmlDivAttributes.className ||
+                    "tweet-textarea-general-style"
+                }`}
+                ref={editorRef}
+                onBeforeInput={beforeInputListener}
+                onInput={inputListener}
+                contentEditable
+            />
+        );
+    }
+);
+
+export default TweetTextarea;

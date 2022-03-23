@@ -1,4 +1,4 @@
-.tweet-textarea {
+.tweet-textarea-general-style {
     padding: 1em;
     border: solid 1px #bbb;
 }
@@ -8,7 +8,7 @@ div p {
     padding: 0;
 }
 
-.highlight {
+.tweet-textarea-entity-highlighting {
     color: cadetblue;
     font-weight: bold;
 }

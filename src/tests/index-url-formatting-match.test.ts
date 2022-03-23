@@ -29,13 +29,11 @@ test.describe("URLs", async () => {
                 delay: 100,
             });
 
-            const span = editor.locator("span");
+            const span = editor.locator("span.highlight");
 
             await expect(await span.count()).toBe(2);
             await expect(span.nth(0)).toHaveText("http://google.com");
-            await expect(span.nth(0)).toHaveClass("highlight");
             await expect(span.nth(1)).toHaveText("https://google.com");
-            await expect(span.nth(1)).toHaveClass("highlight");
         });
 
         test("'www.' should be allowed as part of the URL", async ({

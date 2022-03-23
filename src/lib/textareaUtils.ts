@@ -26,7 +26,11 @@ import {
     IRangeStartAndEnd,
 } from "./types";
 
-function formatAfterUserInput(range: Range, pattern: RegExp) {
+function formatAfterUserInput(
+    range: Range,
+    pattern: RegExp,
+    highlightClassName?: string
+) {
     /**
      * The main formatting function that handles what happens
      * when the user types some text into the editor.
@@ -86,12 +90,22 @@ function formatAfterUserInput(range: Range, pattern: RegExp) {
         },
     };
 
-    formatNodeTriplet(range, pattern, parentData, nodeTriplet);
+    formatNodeTriplet(
+        range,
+        pattern,
+        parentData,
+        nodeTriplet,
+        highlightClassName
+    );
 
     repositionCursorAfterUserInputFormat(parentData, offset);
 }
 
-function formatAfterNewParagraph(range: Range, pattern: RegExp) {
+function formatAfterNewParagraph(
+    range: Range,
+    pattern: RegExp,
+    highlightClassName?: string
+) {
     /**
      * Handles formatting the text after the user presses
      * the Enter key.
@@ -111,13 +125,13 @@ function formatAfterNewParagraph(range: Range, pattern: RegExp) {
     if (previousParagraph) {
         const textNode = prepParagraphForReformatting(range, previousParagraph);
 
-        format(range, textNode, pattern, previousParagraph);
+        format(range, textNode, pattern, highlightClassName, previousParagraph);
     }
 
     if (currentParagraph) {
         const textNode = prepParagraphForReformatting(range, currentParagraph);
 
-        format(range, textNode, pattern, currentParagraph);
+        format(range, textNode, pattern, highlightClassName, currentParagraph);
     }
 }
 
@@ -125,7 +139,8 @@ function formatNodeTriplet(
     range: Range,
     pattern: RegExp,
     parentAndOffset: INodeAndOffset,
-    nodeTriplet: INodeTriplet
+    nodeTriplet: INodeTriplet,
+    highlightClassName?: string
 ): void {
     /**
      * Helper function to format a node triplet made of
@@ -162,7 +177,7 @@ function formatNodeTriplet(
 
     setCursorPosition(textNode, textNode.textContent?.length || 0);
 
-    format(range, textNode, pattern);
+    format(range, textNode, pattern, highlightClassName);
 }
 
 function repositionCursorAfterUserInputFormat(
@@ -210,6 +225,7 @@ function format(
     range: Range,
     textNode: Text,
     pattern: RegExp,
+    highlightClassName?: string,
     finalNode?: Element
 ): void {
     /**
@@ -242,6 +258,9 @@ function format(
 
                 const span = document.createElement("span");
                 span.classList.add("highlight");
+                span.classList.add(
+                    highlightClassName || "tweet-textarea-entity-highlighting"
+                );
 
                 range.surroundContents(span);
 

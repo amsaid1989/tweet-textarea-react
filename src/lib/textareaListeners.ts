@@ -103,7 +103,8 @@ function textareaBeforeInputListener(
 function textareaInputListener(
     event: React.FormEvent<HTMLDivElement>,
     editorRef: React.MutableRefObject<HTMLDivElement | null>,
-    pattern: RegExp
+    pattern: RegExp,
+    highlightClassName?: string
 ): void {
     const inputType = (event.nativeEvent as InputEvent).inputType;
 
@@ -165,9 +166,13 @@ function textareaInputListener(
          * When user presses Enter, creating a new paragraph, recalculate
          * the formatting for the current and previous paragraphs
          */
-        textareaUtils.formatAfterNewParagraph(range, pattern);
+        textareaUtils.formatAfterNewParagraph(
+            range,
+            pattern,
+            highlightClassName
+        );
     } else {
-        textareaUtils.formatAfterUserInput(range, pattern);
+        textareaUtils.formatAfterUserInput(range, pattern, highlightClassName);
     }
 
     editorRef.current.normalize();
