@@ -356,35 +356,6 @@ function insertParagraphOnEmptyEditor(
     }
 }
 
-function pasteTextInEmptyEditor(editor: HTMLDivElement, textNode: Text): void {
-    /**
-     * Handles pasting text in an empty editor. In this case, the text
-     * initially gets pasted in a text node that is an immediate child
-     * of the editor node.
-     *
-     * The function takes that text node and adds it as a child inside
-     * a paragraph node.
-     */
-    const sel = document.getSelection();
-
-    if (!sel) {
-        return;
-    }
-
-    const range = sel.getRangeAt(0);
-
-    if (!range) {
-        return;
-    }
-
-    const paragraph = document.createElement("p");
-    paragraph.appendChild(textNode);
-
-    editor.appendChild(paragraph);
-
-    setCursorPosition(textNode, textNode.textContent?.length || 0);
-}
-
 function addNonBreakingSpace(range: Range, node: Node): void {
     /**
      * Adds a text node with a non-breaking space character
@@ -475,6 +446,30 @@ function findNodeInParent(parent: Node, node: Node): number | undefined {
     }
 
     return offsetInParent;
+}
+
+function getParentParagraph(node: Node): HTMLParagraphElement | null {
+    /**
+     * Utility function to go up the node hierarchy looking for
+     * the parent paragraph of the node provided
+     */
+    let parent: HTMLParagraphElement | null = null;
+
+    if ((node as Element).tagName === "P") {
+        return node as HTMLParagraphElement;
+    }
+
+    let currentNode = node;
+    while (currentNode.parentElement) {
+        if (currentNode.parentElement.tagName === "P") {
+            parent = currentNode.parentElement as HTMLParagraphElement;
+            break;
+        } else {
+            currentNode = currentNode.parentElement;
+        }
+    }
+
+    return parent;
 }
 
 function getCurrentNodeAndOffset(
@@ -638,10 +633,15 @@ const textareaUtils = {
     formatAfterUserInput,
     formatAfterNewParagraph,
     insertParagraphOnEmptyEditor,
-    pasteTextInEmptyEditor,
     addNonBreakingSpace,
     deleteAllEditorChildren,
     isDeletionEvent,
+    // Temporary
+    setCursorPosition,
+    findNodeInParent,
+    format,
+    repositionCursorAfterUserInputFormat,
+    getParentParagraph,
 };
 
 export default textareaUtils;

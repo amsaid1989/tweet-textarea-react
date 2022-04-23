@@ -31,6 +31,15 @@ interface TweetTextareaProps
     highlightClassName?: string;
 }
 
+/**
+ * TODO (Abdelrahman): rather than supporting the onBeforeInput and onInput
+ * events, create a custom 'textchanged' event and add an onTextChanged
+ * prop, for the users of the editor to use to pass their event listeners.
+ *
+ * The 'textchanged' event will be dispatched from the beforeInput, paste
+ * and input listeners that are defined inside the component, whenever the
+ * text inside the editor is changed.
+ */
 const TweetTextarea = forwardRef<HTMLDivElement | null, TweetTextareaProps>(
     (
         { highlightClassName, ...htmlDivAttributes }: TweetTextareaProps,
@@ -97,6 +106,19 @@ const TweetTextarea = forwardRef<HTMLDivElement | null, TweetTextareaProps>(
             textareaListeners.textareaBeforeInputListener(event, editorRef);
         };
 
+        const pasteListener = (event: React.ClipboardEvent<HTMLDivElement>) => {
+            if (!editorRef || !pattern) {
+                return;
+            }
+
+            textareaListeners.textareaPasteListener(
+                event,
+                editorRef,
+                pattern,
+                highlightClassName
+            );
+        };
+
         const inputListener = (event: React.FormEvent<HTMLDivElement>) => {
             if (
                 htmlDivAttributes.onInput &&
@@ -127,6 +149,7 @@ const TweetTextarea = forwardRef<HTMLDivElement | null, TweetTextareaProps>(
                 }`}
                 ref={editorRef}
                 onBeforeInput={beforeInputListener}
+                onPaste={pasteListener}
                 onInput={inputListener}
                 contentEditable
             />

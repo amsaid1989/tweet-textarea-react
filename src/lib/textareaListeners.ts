@@ -100,6 +100,242 @@ function textareaBeforeInputListener(
     }
 }
 
+function textareaPasteListener(
+    event: React.ClipboardEvent<HTMLDivElement>,
+    editorRef: React.MutableRefObject<HTMLDivElement | null>,
+    pattern: RegExp,
+    highlightClassName?: string
+): void {
+    event.preventDefault();
+
+    const selection = document.getSelection();
+    const range = selection?.getRangeAt(0);
+
+    if (!editorRef.current || !range) {
+        return;
+    }
+
+    const { startContainer, startOffset, endContainer } = range;
+
+    if (range.toString().length === editorRef.current.textContent?.length) {
+        /**
+         * If user has all text in the editor selected and they paste
+         * something, delete all the child nodes of the editor
+         */
+        textareaUtils.deleteAllEditorChildren(editorRef.current);
+    } else {
+        /**
+         * Otherwise, delete whatever is selected
+         */
+        range.deleteContents();
+    }
+
+    /**
+     * Split the text to be pasted at the new lines and create
+     * a paragraph element for each line
+     */
+    const lines = event.clipboardData.getData("text/plain").split("\n");
+    const paragraphs = lines.map((line) => {
+        const p = document.createElement("p");
+        p.textContent = line;
+
+        if (line.length === 0) {
+            p.appendChild(document.createElement("br"));
+        }
+
+        return p;
+    });
+
+    /**
+     * Get the text length of the last paragraph element to
+     * use it when setting the cursor at the end
+     */
+    let lastParagraphLength =
+        paragraphs[paragraphs.length - 1].textContent?.length || 0;
+
+    let paragraphsToFormat: HTMLParagraphElement[] = [];
+
+    if (editorRef.current.childNodes.length === 0) {
+        paragraphs.forEach((node) => editorRef.current?.appendChild(node));
+
+        paragraphsToFormat = paragraphs;
+    } else {
+        const startParagraph = textareaUtils.getParentParagraph(startContainer);
+        const endParagraph = textareaUtils.getParentParagraph(endContainer);
+
+        if (!startParagraph) {
+            return;
+        }
+
+        /**
+         * Handles pasting text on a non-empty editor. In this case,
+         * we find the start paragraph inside the editor, so we can
+         * add the text of the first paragraph element to it
+         */
+        let paragraphOffsetInEditor = textareaUtils.findNodeInParent(
+            editorRef.current,
+            startParagraph
+        );
+
+        /**
+         * Next, starting from the second paragraph of the paragraphs
+         * to be added, we add each one of them to the editor
+         */
+        paragraphs.slice(1).forEach((node) => {
+            if (!editorRef.current || paragraphOffsetInEditor === undefined) {
+                return;
+            }
+
+            paragraphOffsetInEditor++;
+
+            textareaUtils.setCursorPosition(
+                editorRef.current,
+                paragraphOffsetInEditor
+            );
+
+            range.insertNode(node);
+        });
+
+        if (startParagraph !== endParagraph) {
+            /**
+             * Handles what happens if the user selects text across
+             * multiple paragraphs before pasting. In this case,
+             * the start paragraph will get the text of the first
+             * paragraph element added to it, and the last paragraph
+             * element will get the text of the end paragraph added
+             * to it. The end paragraph will then be removed from
+             * the editor.
+             */
+
+            /**
+             * The order is important. We first have to start by adding
+             * any necessary text to the last paragraph of the paragraphs
+             * to be pasted. This is because if we only have one paragraph
+             * to paste, then the element itself won't be added to the
+             * editor. Instead, its text content will be added to an
+             * existing paragraph, which means that trying to modify
+             * the text content of the to-be-added paragraph element is
+             * not going to be reflected in the editor.
+             */
+            if (endParagraph) {
+                if (
+                    endParagraph.textContent === undefined ||
+                    endParagraph.textContent === null
+                ) {
+                    return;
+                }
+
+                const lastParagraph = paragraphs[paragraphs.length - 1];
+
+                lastParagraph.textContent += endParagraph.textContent;
+
+                if (
+                    lastParagraph.textContent?.length === 0 &&
+                    lastParagraph.childNodes.length === 0
+                ) {
+                    lastParagraph.appendChild(document.createElement("br"));
+                }
+
+                endParagraph.parentElement?.removeChild(endParagraph);
+            }
+        } else {
+            /**
+             * Handles what happens if the user pastes text inside
+             * one paragraph. In this case, the text inside the
+             * paragraph will be selected from the cursor position
+             * to the end of the paragraph, and it will be removed.
+             * It will later, be added to the last paragraph element.
+             *
+             * Then, the text of the first paragraph element will be
+             * added to the start paragraph.
+             */
+            range.setStart(startContainer, startOffset);
+            range.setEnd(startParagraph, startParagraph.childNodes.length);
+
+            const text = range.toString();
+
+            range.deleteContents();
+
+            const lastParagraph = paragraphs[paragraphs.length - 1];
+
+            lastParagraph.textContent += text;
+
+            if (
+                lastParagraph.textContent?.length === 0 &&
+                lastParagraph.childNodes.length === 0
+            ) {
+                lastParagraph.appendChild(document.createElement("br"));
+            }
+        }
+
+        if (paragraphs.length === 1) {
+            /**
+             * Addresses a bug where the cursor position would
+             * not be set correctly the last word of the last
+             * paragraph element to be pasted when there is
+             * only one paragraph element to add.
+             *
+             * This is due to the fact that the text length
+             * stored in the lastParagraphLength variable
+             * won't be correct because it doesn't take into
+             * account the length of the existing text in the
+             * start paragraph to which to the text of the
+             * first paragraph element will be added.
+             */
+
+            if (startParagraph.textContent?.length !== undefined) {
+                lastParagraphLength += startParagraph.textContent.length;
+            }
+        }
+
+        if (
+            startParagraph.textContent === undefined ||
+            startParagraph.textContent === null
+        ) {
+            return;
+        }
+
+        /**
+         * Add the text from the first paragraph to be pasted
+         * to the startParagraph
+         */
+        startParagraph.textContent += paragraphs[0].textContent;
+        if (startParagraph.textContent.length === 0) {
+            startParagraph.appendChild(document.createElement("br"));
+        }
+
+        paragraphsToFormat = [startParagraph, ...paragraphs.slice(1)];
+    }
+
+    /**
+     * Format each paragraph
+     */
+    paragraphsToFormat.forEach((node) => {
+        if (node.firstChild && node.firstChild.nodeType === 3) {
+            textareaUtils.format(
+                range,
+                node.firstChild as Text,
+                pattern,
+                highlightClassName
+            );
+        }
+    });
+
+    const lastParagraph = paragraphsToFormat[paragraphsToFormat.length - 1];
+
+    if (!lastParagraph) {
+        return;
+    }
+
+    /**
+     * Calculate the final cursor position
+     */
+    textareaUtils.repositionCursorAfterUserInputFormat(
+        { node: lastParagraph, offset: 0 },
+        lastParagraphLength
+    );
+}
+
 function textareaInputListener(
     event: React.FormEvent<HTMLDivElement>,
     editorRef: React.MutableRefObject<HTMLDivElement | null>,
@@ -125,27 +361,6 @@ function textareaInputListener(
              */
             textareaUtils.deleteAllEditorChildren(editorRef.current);
             return;
-        } else if (
-            inputType === "insertFromPaste" &&
-            editorRef.current.childNodes[0].nodeType === 3
-        ) {
-            /**
-             * Handles the special case when the user pastes text
-             * into an empty editor. In this case, the text will
-             * be added inside a text node that is an immediate
-             * child to the editor. We need to remove that node,
-             * add a paragraph to the editor, and then add that
-             * text node into the paragraph.
-             */
-            const textNode = editorRef.current.childNodes[0] as Text;
-
-            if (!textNode) {
-                return;
-            }
-
-            textareaUtils.deleteAllEditorChildren(editorRef.current);
-
-            textareaUtils.pasteTextInEmptyEditor(editorRef.current, textNode);
         }
     }
 
@@ -180,6 +395,7 @@ function textareaInputListener(
 
 const textareaListeners = {
     textareaBeforeInputListener,
+    textareaPasteListener,
     textareaInputListener,
 };
 
