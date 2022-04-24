@@ -170,7 +170,8 @@ function textareaPasteListener(
         /**
          * Handles pasting text on a non-empty editor. In this case,
          * we find the start paragraph inside the editor, so we can
-         * add the text of the first paragraph element to it
+         * add the text of the first paragraph element to it and add
+         * the subsequent paragraphs after it
          */
         let paragraphOffsetInEditor = textareaUtils.findNodeInParent(
             editorRef.current,
@@ -227,14 +228,10 @@ function textareaPasteListener(
 
                 const lastParagraph = paragraphs[paragraphs.length - 1];
 
-                lastParagraph.textContent += endParagraph.textContent;
-
-                if (
-                    lastParagraph.textContent?.length === 0 &&
-                    lastParagraph.childNodes.length === 0
-                ) {
-                    lastParagraph.appendChild(document.createElement("br"));
-                }
+                textareaUtils.appendTextToParagraph(
+                    lastParagraph,
+                    endParagraph.textContent
+                );
 
                 endParagraph.parentElement?.removeChild(endParagraph);
             }
@@ -258,14 +255,7 @@ function textareaPasteListener(
 
             const lastParagraph = paragraphs[paragraphs.length - 1];
 
-            lastParagraph.textContent += text;
-
-            if (
-                lastParagraph.textContent?.length === 0 &&
-                lastParagraph.childNodes.length === 0
-            ) {
-                lastParagraph.appendChild(document.createElement("br"));
-            }
+            textareaUtils.appendTextToParagraph(lastParagraph, text);
         }
 
         if (paragraphs.length === 1) {
@@ -299,41 +289,28 @@ function textareaPasteListener(
          * Add the text from the first paragraph to be pasted
          * to the startParagraph
          */
-        startParagraph.textContent += paragraphs[0].textContent;
-        if (startParagraph.textContent.length === 0) {
-            startParagraph.appendChild(document.createElement("br"));
+        if (
+            paragraphs[0].textContent !== undefined &&
+            paragraphs[0].textContent !== null
+        ) {
+            textareaUtils.appendTextToParagraph(
+                startParagraph,
+                paragraphs[0].textContent
+            );
         }
 
         paragraphsToFormat = [startParagraph, ...paragraphs.slice(1)];
     }
 
-    /**
-     * Format each paragraph
-     */
-    paragraphsToFormat.forEach((node) => {
-        if (node.firstChild && node.firstChild.nodeType === 3) {
-            textareaUtils.format(
-                range,
-                node.firstChild as Text,
-                pattern,
-                highlightClassName
-            );
-        }
-    });
-
-    const lastParagraph = paragraphsToFormat[paragraphsToFormat.length - 1];
-
-    if (!lastParagraph) {
-        return;
-    }
-
-    /**
-     * Calculate the final cursor position
-     */
-    textareaUtils.repositionCursorAfterUserInputFormat(
-        { node: lastParagraph, offset: 0 },
-        lastParagraphLength
+    textareaUtils.formatParagraphsAfterPasting(
+        paragraphsToFormat,
+        lastParagraphLength,
+        range,
+        pattern,
+        highlightClassName
     );
+
+    editorRef.current.normalize();
 }
 
 function textareaInputListener(

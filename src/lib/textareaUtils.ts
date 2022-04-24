@@ -98,7 +98,7 @@ function formatAfterUserInput(
         highlightClassName
     );
 
-    repositionCursorAfterUserInputFormat(parentData, offset);
+    repositionCursorInParagraph(parentData, offset);
 }
 
 function formatAfterNewParagraph(
@@ -132,7 +132,56 @@ function formatAfterNewParagraph(
         const textNode = prepParagraphForReformatting(range, currentParagraph);
 
         format(range, textNode, pattern, highlightClassName, currentParagraph);
+
+        // let firstTextNode: Text | undefined;
+
+        // if (!currentParagraph.firstChild) {
+        //     return;
+        // }
+
+        // if (currentParagraph.firstChild.nodeName === "SPAN") {
+        //     firstTextNode = currentParagraph.firstChild.firstChild as Text;
+        // } else if (currentParagraph.firstChild.nodeType === 3) {
+        //     firstTextNode = currentParagraph.firstChild as Text;
+        // }
+
+        // if (firstTextNode === undefined) {
+        //     return;
+        // }
+
+        // setCursorPosition(firstTextNode, 0);
     }
+}
+
+function formatParagraphsAfterPasting(
+    paragraphsToFormat: HTMLParagraphElement[],
+    lastParagraphLength: number,
+    range: Range,
+    pattern: RegExp,
+    highlightClassName?: string
+): void {
+    /**
+     * Format each paragraph
+     */
+    paragraphsToFormat.forEach((node) => {
+        if (node.firstChild && node.firstChild.nodeType === 3) {
+            format(range, node.firstChild as Text, pattern, highlightClassName);
+        }
+    });
+
+    const lastParagraph = paragraphsToFormat[paragraphsToFormat.length - 1];
+
+    if (!lastParagraph) {
+        return;
+    }
+
+    /**
+     * Calculate the final cursor position
+     */
+    repositionCursorInParagraph(
+        { node: lastParagraph, offset: 0 },
+        lastParagraphLength
+    );
 }
 
 function formatNodeTriplet(
@@ -180,7 +229,7 @@ function formatNodeTriplet(
     format(range, textNode, pattern, highlightClassName);
 }
 
-function repositionCursorAfterUserInputFormat(
+function repositionCursorInParagraph(
     paragraphAndOffset: INodeAndOffset,
     offset: number
 ): void {
@@ -394,6 +443,20 @@ function deleteAllEditorChildren(editor: HTMLDivElement): void {
     }
 }
 
+function appendTextToParagraph(
+    paragraph: HTMLParagraphElement,
+    text: string
+): void {
+    paragraph.textContent += text;
+
+    if (
+        paragraph.textContent?.length === 0 &&
+        paragraph.childNodes.length === 0
+    ) {
+        paragraph.appendChild(document.createElement("br"));
+    }
+}
+
 function isDeletionEvent(inputType: string): boolean {
     return (
         inputType === "deleteContentBackward" ||
@@ -492,6 +555,26 @@ function getCurrentNodeAndOffset(
     let node = range.startContainer as Element;
     let offset = range.startOffset;
 
+    if (node.tagName === "DIV") {
+        /**
+         * Addresses a bug where when the user presses the
+         * Delete button (triggering the deleteContentForward
+         * event) in an empty paragraph, the startContainer of
+         * the range ends up being the editor node itself.
+         *
+         * In this case, since we don't need to do any formatting,
+         * we just set the cursor to the paragraph at the
+         * current offset and return an object with null node
+         * and null offset, so the formatting logic isn't
+         * triggered.
+         */
+        const currentParagraph = node.childNodes[offset - 1];
+
+        setCursorPosition(currentParagraph, currentParagraph.childNodes.length);
+
+        return { node: null, offset: null };
+    }
+
     if (node.tagName === "P") {
         /**
          * Addresses a behavior where if the user deletes
@@ -499,8 +582,13 @@ function getCurrentNodeAndOffset(
          * will be automatically deleted making the
          * parent paragraph the startContainer of the
          * range rather than any text node.
+         *
+         * It also handles the case when the user presses
+         * the Delete button, triggering the deleteContentForward
+         * event while at the start of a paragraph.
          */
-        const lastChildBeforeOffset = node.childNodes[offset - 1] as Element;
+        const childIndex = offset - 1 >= 0 ? offset - 1 : 0;
+        const lastChildBeforeOffset = node.childNodes[childIndex] as Element;
 
         if (lastChildBeforeOffset) {
             node = lastChildBeforeOffset;
@@ -521,7 +609,7 @@ function getCurrentNodeAndOffset(
             node = node.firstChild as Element;
         }
 
-        if (node.textContent?.length !== undefined) {
+        if (offset > 0 && node.textContent?.length !== undefined) {
             /**
              * In the case where startContainer is the paragraph,
              * we need to set the offset to the end of the text
@@ -529,6 +617,11 @@ function getCurrentNodeAndOffset(
              * was for the location of the node in the parent
              * paragraph rather than the cursor position in the
              * text.
+             *
+             * We only do that if the cursor wasn't at the beginning
+             * of the paragraph. If the cursor, was at the beginning
+             * of the paragraph (i.e. offset is 0), then we leave
+             * it as it is.
              */
             offset = node.textContent.length;
         }
@@ -632,15 +725,14 @@ function getCurrentParagraph(range: Range): Element | undefined {
 const textareaUtils = {
     formatAfterUserInput,
     formatAfterNewParagraph,
+    formatParagraphsAfterPasting,
     insertParagraphOnEmptyEditor,
     addNonBreakingSpace,
     deleteAllEditorChildren,
     isDeletionEvent,
-    // Temporary
+    appendTextToParagraph,
     setCursorPosition,
     findNodeInParent,
-    format,
-    repositionCursorAfterUserInputFormat,
     getParentParagraph,
 };
 
