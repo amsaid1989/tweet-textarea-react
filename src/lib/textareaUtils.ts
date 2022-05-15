@@ -292,34 +292,40 @@ function format(
      */
     const matches = textNode.textContent?.matchAll(pattern);
 
-    if (matches) {
-        const matchArr = Array.from(matches).reverse();
+    if (!matches) {
+        return;
+    }
 
-        for (const match of matchArr) {
-            const textMatch = match[1] || match[2] || match[3] || match[4];
+    const matchArr = Array.from(matches).reverse();
 
-            if (textMatch && match.index !== undefined) {
-                const start =
-                    match[0] === textMatch ? match.index : match.index + 1;
+    if (matchArr.length === 0) {
+        return;
+    }
 
-                range.setStart(textNode, start);
-                range.setEnd(textNode, start + textMatch.length);
+    for (const match of matchArr) {
+        const textMatch = match[1] || match[2] || match[3] || match[4];
 
-                const span = document.createElement("span");
-                span.classList.add("highlight");
-                span.classList.add(
-                    highlightClassName || "tweet-textarea-entity-highlighting"
-                );
+        if (textMatch && match.index !== undefined) {
+            const start =
+                match[0] === textMatch ? match.index : match.index + 1;
 
-                range.surroundContents(span);
+            range.setStart(textNode, start);
+            range.setEnd(textNode, start + textMatch.length);
 
-                let startNode: Node = span;
-                if (finalNode) {
-                    startNode = finalNode;
-                }
+            const span = document.createElement("span");
+            span.classList.add("highlight");
+            span.classList.add(
+                highlightClassName || "tweet-textarea-entity-highlighting"
+            );
 
-                setCursorPosition(startNode, 0);
+            range.surroundContents(span);
+
+            let startNode: Node = span;
+            if (finalNode) {
+                startNode = finalNode;
             }
+
+            setCursorPosition(startNode, 0);
         }
     }
 }

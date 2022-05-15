@@ -8,6 +8,19 @@ div p {
     padding: 0;
 }
 
+.placeholder {
+    position: absolute;
+    color: #bbb;
+    padding: 0;
+    margin: 0;
+    pointer-events: none;
+}
+
+.input-area {
+    height: 100%;
+    outline: none;
+}
+
 .tweet-textarea-entity-highlighting {
     color: cadetblue;
     font-weight: bold;
