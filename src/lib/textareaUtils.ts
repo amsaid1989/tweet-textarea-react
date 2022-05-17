@@ -596,7 +596,7 @@ function getCurrentNodeAndOffset(
         const childIndex = offset - 1 >= 0 ? offset - 1 : 0;
         const lastChildBeforeOffset = node.childNodes[childIndex] as Element;
 
-        if (lastChildBeforeOffset) {
+        if (lastChildBeforeOffset && lastChildBeforeOffset.tagName !== "BR") {
             node = lastChildBeforeOffset;
         } else {
             // Handles special case which occurs when

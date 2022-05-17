@@ -22,7 +22,7 @@
 import React, { useState, useEffect, useRef, forwardRef } from "react";
 import patterns from "./lib/patterns";
 import textareaListeners from "./lib/textareaListeners";
-import customEvents from "./lib/customEvents";
+import customEvents, { textUpdateDetail } from "./lib/customEvents";
 import "./static/editorStyles.css";
 
 const STORAGE_KEY = "highlightPattern";
@@ -34,7 +34,7 @@ export interface TweetTextareaProps
     > {
     highlightClassName?: string;
     placeholder?: string;
-    onTextUpdate?: (event: CustomEvent<string>) => void;
+    onTextUpdate?: (event: CustomEvent<textUpdateDetail>) => void;
 }
 
 /**
@@ -137,16 +137,11 @@ const TweetTextarea = forwardRef<HTMLDivElement | null, TweetTextareaProps>(
 
             setText(editorRef.current?.textContent || "");
 
-            if (
-                !editorRef.current?.textContent ||
-                !event.isDefaultPrevented()
-            ) {
+            if (!editorRef.current || !event.isDefaultPrevented()) {
                 return;
             }
 
-            customEvents.dispatchTextUpdateEvent(editorRef.current, {
-                currentText: editorRef.current.textContent,
-            });
+            customEvents.dispatchTextUpdateEvent(editorRef.current);
         };
 
         const pasteListener = (event: React.ClipboardEvent<HTMLDivElement>) => {
@@ -163,16 +158,11 @@ const TweetTextarea = forwardRef<HTMLDivElement | null, TweetTextareaProps>(
 
             setText(editorRef.current?.textContent || "");
 
-            if (
-                !editorRef.current?.textContent ||
-                !event.isDefaultPrevented()
-            ) {
+            if (!editorRef.current || !event.isDefaultPrevented()) {
                 return;
             }
 
-            customEvents.dispatchTextUpdateEvent(editorRef.current, {
-                currentText: editorRef.current.textContent,
-            });
+            customEvents.dispatchTextUpdateEvent(editorRef.current);
         };
 
         const inputListener = (event: React.FormEvent<HTMLDivElement>) => {
@@ -189,13 +179,42 @@ const TweetTextarea = forwardRef<HTMLDivElement | null, TweetTextareaProps>(
 
             setText(editorRef.current?.textContent || "");
 
-            if (!editorRef.current?.textContent) {
+            if (!editorRef.current) {
                 return;
             }
 
-            customEvents.dispatchTextUpdateEvent(editorRef.current, {
-                currentText: editorRef.current.textContent,
-            });
+            customEvents.dispatchTextUpdateEvent(editorRef.current);
+        };
+
+        const mouseUpListener = (
+            event: React.MouseEvent<HTMLDivElement, MouseEvent>
+        ) => {
+            if (!editorRef) {
+                return;
+            }
+
+            const LEFT_MOUSE_BUTTON = 0;
+
+            if (event.button === LEFT_MOUSE_BUTTON) {
+                console.log("Left mouse button clicked");
+            }
+        };
+
+        const keyUpListener = (event: React.KeyboardEvent<HTMLDivElement>) => {
+            if (!editorRef) {
+                return;
+            }
+
+            const arrowKeys = [
+                "ArrowLeft",
+                "ArrowRight",
+                "ArrowDown",
+                "ArrowUp",
+            ];
+
+            if (arrowKeys.includes(event.key)) {
+                console.log("Arrow key pressed");
+            }
         };
         /* END EVENT LISTENERS */
 
@@ -215,6 +234,8 @@ const TweetTextarea = forwardRef<HTMLDivElement | null, TweetTextareaProps>(
                     onBeforeInput={beforeInputListener}
                     onPaste={pasteListener}
                     onInput={inputListener}
+                    onMouseUp={mouseUpListener}
+                    onKeyUp={keyUpListener}
                     contentEditable
                 />
             </div>
