@@ -728,6 +728,94 @@ function getCurrentParagraph(range: Range): Element | undefined {
     return currentParagraph;
 }
 
+function getTextNodeAtStart(
+    originNode: Node,
+    startOffset: number
+): INodeAndOffset | INullNodeAndOffset {
+    const currentNode = getCurrentNodeFromOrigin(originNode, startOffset);
+
+    if (!currentNode) {
+        return { node: null, offset: null };
+    }
+
+    let finalOffset = 0;
+
+    const textNode = findTextNode(currentNode);
+
+    if (textNode) {
+        if (startOffset === originNode.childNodes.length) {
+            /**
+             * If the originNode isn't a text node and the startOffset
+             * is at the very end of the originNode, then we need to
+             * set the cursor to the end of the text node rather
+             * than the start
+             */
+            if (textNode.textContent?.length !== undefined) {
+                finalOffset = textNode.textContent.length;
+            }
+        }
+
+        return { node: textNode, offset: finalOffset };
+    }
+
+    return { node: null, offset: null };
+}
+
+function getTextNodeAtEnd(
+    originNode: Node,
+    endOffset: number
+): INodeAndOffset | INullNodeAndOffset {
+    const currentNode = getCurrentNodeFromOrigin(originNode, endOffset);
+
+    if (!currentNode) {
+        return { node: null, offset: null };
+    }
+
+    const textNode = findTextNode(currentNode);
+
+    if (textNode) {
+        if (textNode.textContent?.length !== undefined) {
+            return { node: textNode, offset: textNode.textContent.length };
+        }
+    }
+
+    return { node: null, offset: null };
+}
+
+function getCurrentNodeFromOrigin(originNode: Node, offset: number): Node {
+    /**
+     * Utility function that returns the current childNode of the originNode.
+     * If offset is at the end of the originNode, then it returns the last
+     * childNode, unless the last childNode is a line break element, then it
+     * returns the child before last.
+     */
+    let index = offset === originNode.childNodes.length ? offset - 1 : offset;
+
+    if ((originNode.childNodes[index] as Element).tagName === "BR") {
+        index -= 1;
+    }
+
+    return originNode.childNodes[index];
+}
+
+function findTextNode(node: Node): Text | null {
+    if (node.nodeType === 3) {
+        return node as Text;
+    }
+
+    let current = node;
+
+    while (current.firstChild) {
+        if (current.firstChild.nodeType === 3) {
+            return current.firstChild as Text;
+        }
+
+        current = node.firstChild as Node;
+    }
+
+    return null;
+}
+
 const textareaUtils = {
     formatAfterUserInput,
     formatAfterNewParagraph,
@@ -740,6 +828,8 @@ const textareaUtils = {
     setCursorPosition,
     findNodeInParent,
     getParentParagraph,
+    getTextNodeAtStart,
+    getTextNodeAtEnd,
 };
 
 export default textareaUtils;

@@ -22,6 +22,7 @@
 import React, { useState, useEffect, useRef, forwardRef } from "react";
 import patterns from "./lib/patterns";
 import textareaListeners from "./lib/textareaListeners";
+import textareaUtils from "./lib/textareaUtils";
 import customEvents, { textUpdateDetail } from "./lib/customEvents";
 import "./static/editorStyles.css";
 
@@ -201,20 +202,105 @@ const TweetTextarea = forwardRef<HTMLDivElement | null, TweetTextareaProps>(
         };
 
         const keyUpListener = (event: React.KeyboardEvent<HTMLDivElement>) => {
-            if (!editorRef) {
+            if (!editorRef || !editorRef.current) {
                 return;
             }
 
-            const arrowKeys = [
-                "ArrowLeft",
-                "ArrowRight",
-                "ArrowDown",
-                "ArrowUp",
-            ];
+            let start: number;
+            let end: number;
 
-            if (arrowKeys.includes(event.key)) {
-                console.log("Arrow key pressed");
+            if (editorRef.current.childNodes.length === 0) {
+                start = end = 0;
+
+                // TODO (Abdelrahman): Dispatch the event here
+
+                return;
             }
+
+            const sel = document.getSelection();
+            const range = sel?.getRangeAt(0);
+
+            if (!range) {
+                return;
+            }
+
+            let { startContainer, startOffset, endContainer, endOffset } =
+                range;
+
+            /**
+             * TODO (Abdelrahman): Figure out how to update the startContainer,
+             * startOffset, endContainer and endOffset when the text cursor
+             * ends in a paragraph that has no text nodes.
+             */
+
+            if ((startContainer as Element).tagName === "P") {
+                const { node, offset } = textareaUtils.getTextNodeAtStart(
+                    startContainer,
+                    startOffset
+                );
+
+                if (node) {
+                    startContainer = node;
+                }
+
+                if (offset !== null) {
+                    startOffset = offset;
+                }
+            }
+
+            if (startContainer === editorRef.current) {
+                const { node, offset } = textareaUtils.getTextNodeAtStart(
+                    editorRef.current,
+                    startOffset
+                );
+
+                if (node) {
+                    startContainer = node;
+                }
+
+                if (offset !== null) {
+                    startOffset = offset;
+                }
+            }
+
+            if ((endContainer as Element).tagName === "P") {
+                const { node, offset } = textareaUtils.getTextNodeAtEnd(
+                    endContainer,
+                    endOffset
+                );
+
+                if (node) {
+                    endContainer = node;
+                }
+
+                if (offset !== null) {
+                    endOffset = offset;
+                }
+            }
+
+            if (endContainer === editorRef.current) {
+                const { node, offset } = textareaUtils.getTextNodeAtEnd(
+                    editorRef.current,
+                    endOffset
+                );
+
+                if (node) {
+                    endContainer = node;
+                }
+
+                if (offset !== null) {
+                    endOffset = offset;
+                }
+            }
+
+            console.log(startContainer);
+            console.log(startOffset);
+            console.log(endContainer);
+            console.log(endOffset);
+
+            const startParagraph =
+                textareaUtils.getParentParagraph(startContainer);
+            const endParagraph = textareaUtils.getParentParagraph(endContainer);
         };
         /* END EVENT LISTENERS */
 
