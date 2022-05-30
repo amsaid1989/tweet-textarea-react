@@ -75,6 +75,24 @@ function textareaBeforeInputListener(
         }
     }
 
+    if (range.startContainer === editorRef.current) {
+        /**
+         * Addresses a bug in Firefox where sometimes when the user
+         * selects all the text inside the editor and then deselects
+         * it using the right arrow key, the text cursor would end up
+         * in the textarea itself rather than any node within it.
+         *
+         * In this case, we get the paragraph before the startOffset
+         * (To avoid getting the one at the startOffset, which won't
+         * exist since the cursor would probably be at the end of the
+         * text). We then set the cursor to the end of that paragraph.
+         */
+        const index = range.startOffset - 1;
+        const paragraph = editorRef.current.childNodes[index];
+
+        textareaUtils.setCursorPosition(paragraph, paragraph.childNodes.length);
+    }
+
     if ((event as unknown as InputEvent).data === " ") {
         /**
          * Handles when user inputs a Space character by converting
