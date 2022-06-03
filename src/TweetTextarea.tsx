@@ -22,8 +22,10 @@
 import React, { useState, useEffect, useRef, forwardRef } from "react";
 import patterns from "./lib/patterns";
 import textareaListeners from "./lib/textareaListeners";
-import textareaUtils from "./lib/textareaUtils";
-import customEvents, { textUpdateDetail } from "./lib/customEvents";
+import customEvents, {
+    textUpdateDetail,
+    curorChangeDetail,
+} from "./lib/customEvents";
 import "./static/editorStyles.css";
 
 const STORAGE_KEY = "highlightPattern";
@@ -36,6 +38,7 @@ export interface TweetTextareaProps
     highlightClassName?: string;
     placeholder?: string;
     onTextUpdate?: (event: CustomEvent<textUpdateDetail>) => void;
+    onCursorChange?: (event: CustomEvent<curorChangeDetail>) => void;
 }
 
 /**
@@ -54,6 +57,7 @@ const TweetTextarea = forwardRef<HTMLDivElement | null, TweetTextareaProps>(
             highlightClassName,
             placeholder,
             onTextUpdate,
+            onCursorChange,
             ...htmlDivAttributes
         }: TweetTextareaProps,
         ref: React.ForwardedRef<HTMLDivElement>
@@ -105,26 +109,44 @@ const TweetTextarea = forwardRef<HTMLDivElement | null, TweetTextareaProps>(
 
         // Assign user's event listeners
         useEffect(() => {
-            if (!editorRef.current || !onTextUpdate) {
+            if (!editorRef.current) {
                 return;
             }
 
-            editorRef.current.addEventListener(
-                customEvents.textUpdateEvent,
-                onTextUpdate as EventListener
-            );
-
-            return () => {
-                if (!editorRef.current || !onTextUpdate) {
-                    return;
-                }
-
-                editorRef.current.removeEventListener(
+            if (onTextUpdate) {
+                editorRef.current.addEventListener(
                     customEvents.textUpdateEvent,
                     onTextUpdate as EventListener
                 );
+            }
+
+            if (onCursorChange) {
+                editorRef.current.addEventListener(
+                    customEvents.cursorChangeEvent,
+                    onCursorChange as EventListener
+                );
+            }
+
+            return () => {
+                if (!editorRef.current) {
+                    return;
+                }
+
+                if (onTextUpdate) {
+                    editorRef.current.removeEventListener(
+                        customEvents.textUpdateEvent,
+                        onTextUpdate as EventListener
+                    );
+                }
+
+                if (onCursorChange) {
+                    editorRef.current.removeEventListener(
+                        customEvents.cursorChangeEvent,
+                        onCursorChange as EventListener
+                    );
+                }
             };
-        }, [editorRef.current, onTextUpdate]);
+        }, [editorRef.current, onTextUpdate, onCursorChange]);
 
         /* EVENT LISTENERS */
         const beforeInputListener = (
@@ -187,33 +209,8 @@ const TweetTextarea = forwardRef<HTMLDivElement | null, TweetTextareaProps>(
             customEvents.dispatchTextUpdateEvent(editorRef.current);
         };
 
-        const mouseUpListener = (
-            event: React.MouseEvent<HTMLDivElement, MouseEvent>
-        ) => {
-            if (!editorRef) {
-                return;
-            }
-
-            const LEFT_MOUSE_BUTTON = 0;
-
-            if (event.button === LEFT_MOUSE_BUTTON) {
-                console.log("Left mouse button clicked");
-            }
-        };
-
-        const keyUpListener = (event: React.KeyboardEvent<HTMLDivElement>) => {
+        const cursorEventDispatch = () => {
             if (!editorRef || !editorRef.current) {
-                return;
-            }
-
-            let start: number;
-            let end: number;
-
-            if (editorRef.current.childNodes.length === 0) {
-                start = end = 0;
-
-                // TODO (Abdelrahman): Dispatch the event here
-
                 return;
             }
 
@@ -224,83 +221,7 @@ const TweetTextarea = forwardRef<HTMLDivElement | null, TweetTextareaProps>(
                 return;
             }
 
-            let { startContainer, startOffset, endContainer, endOffset } =
-                range;
-
-            /**
-             * TODO (Abdelrahman): Figure out how to update the startContainer,
-             * startOffset, endContainer and endOffset when the text cursor
-             * ends in a paragraph that has no text nodes.
-             */
-
-            if ((startContainer as Element).tagName === "P") {
-                const { node, offset } = textareaUtils.getTextNodeAtStart(
-                    startContainer,
-                    startOffset
-                );
-
-                if (node) {
-                    startContainer = node;
-                }
-
-                if (offset !== null) {
-                    startOffset = offset;
-                }
-            }
-
-            if (startContainer === editorRef.current) {
-                const { node, offset } = textareaUtils.getTextNodeAtStart(
-                    editorRef.current,
-                    startOffset
-                );
-
-                if (node) {
-                    startContainer = node;
-                }
-
-                if (offset !== null) {
-                    startOffset = offset;
-                }
-            }
-
-            if ((endContainer as Element).tagName === "P") {
-                const { node, offset } = textareaUtils.getTextNodeAtEnd(
-                    endContainer,
-                    endOffset
-                );
-
-                if (node) {
-                    endContainer = node;
-                }
-
-                if (offset !== null) {
-                    endOffset = offset;
-                }
-            }
-
-            if (endContainer === editorRef.current) {
-                const { node, offset } = textareaUtils.getTextNodeAtEnd(
-                    editorRef.current,
-                    endOffset
-                );
-
-                if (node) {
-                    endContainer = node;
-                }
-
-                if (offset !== null) {
-                    endOffset = offset;
-                }
-            }
-
-            console.log(startContainer);
-            console.log(startOffset);
-            console.log(endContainer);
-            console.log(endOffset);
-
-            const startParagraph =
-                textareaUtils.getParentParagraph(startContainer);
-            const endParagraph = textareaUtils.getParentParagraph(endContainer);
+            customEvents.dispatchCursorChangeEvent(editorRef.current, range);
         };
         /* END EVENT LISTENERS */
 
@@ -320,8 +241,8 @@ const TweetTextarea = forwardRef<HTMLDivElement | null, TweetTextareaProps>(
                     onBeforeInput={beforeInputListener}
                     onPaste={pasteListener}
                     onInput={inputListener}
-                    onMouseUp={mouseUpListener}
-                    onKeyUp={keyUpListener}
+                    onMouseUp={cursorEventDispatch}
+                    onKeyUp={cursorEventDispatch}
                     contentEditable
                 />
             </div>
