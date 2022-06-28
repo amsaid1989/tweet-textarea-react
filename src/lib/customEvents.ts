@@ -1,14 +1,14 @@
 import textareaUtils from "./textareaUtils";
-export interface textUpdateDetail {
+export interface TextUpdateDetail {
     currentText: string;
 }
 
-export interface curorChangeDetail {
+export interface CurorChangeDetail {
     start: number;
     end: number;
 }
 
-interface nullCurorChangeDetail {
+interface NullCurorChangeDetail {
     start: null;
     end: null;
 }
@@ -27,7 +27,7 @@ function getCurrentText(divElement: HTMLDivElement): string {
 }
 
 function dispatchTextUpdateEvent(divElement: HTMLDivElement): void {
-    const ev = new CustomEvent<textUpdateDetail>(textUpdateEvent, {
+    const ev = new CustomEvent<TextUpdateDetail>(textUpdateEvent, {
         detail: {
             currentText: getCurrentText(divElement),
         },
@@ -39,7 +39,7 @@ function dispatchTextUpdateEvent(divElement: HTMLDivElement): void {
 function getCursorLocation(
     divElement: HTMLDivElement,
     range: Range
-): curorChangeDetail | nullCurorChangeDetail {
+): CurorChangeDetail | NullCurorChangeDetail {
     let start: number;
     let end: number;
 
@@ -51,7 +51,7 @@ function getCursorLocation(
 
     let { startContainer, startOffset, endContainer, endOffset } = range;
 
-    if (startContainer === divElement && endContainer === divElement) {
+    if (startContainer === divElement) {
         const paragraphsBeforeStartOffset = Array.from(
             divElement.childNodes
         ).slice(0, startOffset);
@@ -64,7 +64,89 @@ function getCursorLocation(
                 divElement
             );
         }
+    } else {
+        /**
+         * GET THE START PARAGRAPH
+         */
+        const startParagraph = textareaUtils.getParentParagraph(startContainer);
 
+        if (!startParagraph) {
+            return { start: null, end: null };
+        }
+
+        /**
+         * CALCULATE TEXT LENGTH BEFORE START PARAGRAPH
+         */
+        const startPIndex = textareaUtils.findNodeInParent(
+            divElement,
+            startParagraph
+        );
+
+        if (startPIndex === undefined) {
+            return { start: null, end: null };
+        }
+
+        const paragraphsBeforeStart = Array.from(divElement.childNodes).slice(
+            0,
+            startPIndex
+        );
+
+        if (paragraphsBeforeStart.length === 0) {
+            start = 0;
+        } else {
+            start = textareaUtils.sumTextLengthOfParagraphsArray(
+                paragraphsBeforeStart as HTMLParagraphElement[],
+                divElement
+            );
+        }
+
+        /**
+         * Add the length of all the nodes from the start of the current
+         * paragraph and up to the cursor
+         */
+
+        if ((startContainer as Element).tagName === "P") {
+            /**
+             * Handle the case when startContainer is a paragraph. In this case, we
+             * add the length of all the child nodes of the paragraph up to, but
+             * excluding, the node at startOffset.
+             */
+
+            if (
+                startContainer.textContent?.length !== undefined &&
+                startContainer.textContent.length > 0
+            ) {
+                const nodesBeforeStartOffset = Array.from(
+                    startContainer.childNodes
+                ).slice(0, startOffset);
+
+                start = textareaUtils.sumTextLengthOfNodesArray(
+                    nodesBeforeStartOffset,
+                    start
+                );
+            }
+        } else if (startContainer.nodeType === 3) {
+            /**
+             * Handle the case when startContainer is a text node. In this case, we
+             * sum the length of all the nodes before the startContainer in the
+             * parent paragraph, then we increment the result by startOffset.
+             */
+
+            const textLengthBeforeStartContainer =
+                textareaUtils.getTextLengthBeforeCurrentTextNode(
+                    startContainer as Text,
+                    startParagraph
+                );
+
+            if (textLengthBeforeStartContainer < 0) {
+                return { start: null, end: null };
+            }
+
+            start += startOffset + textLengthBeforeStartContainer;
+        }
+    }
+
+    if (endContainer === divElement) {
         const paragraphsBeforeEndOffset = Array.from(
             divElement.childNodes
         ).slice(0, endOffset);
@@ -77,143 +159,76 @@ function getCursorLocation(
                 divElement
             );
         }
-
-        return { start, end };
-    }
-
-    /**
-     * GET THE START AND END PARAGRAPHS
-     */
-    const startParagraph = textareaUtils.getParentParagraph(startContainer);
-    const endParagraph = textareaUtils.getParentParagraph(endContainer);
-
-    if (!startParagraph || !endParagraph) {
-        return { start: null, end: null };
-    }
-
-    /**
-     * CALCULATE TEXT LENGTH BEFORE START AND END PARAGRAPHS
-     */
-    const startPIndex = textareaUtils.findNodeInParent(
-        divElement,
-        startParagraph
-    );
-    const endPIndex = textareaUtils.findNodeInParent(divElement, endParagraph);
-
-    if (startPIndex === undefined || endPIndex === undefined) {
-        return { start: null, end: null };
-    }
-
-    const paragraphsBeforeStart = Array.from(divElement.childNodes).slice(
-        0,
-        startPIndex
-    );
-
-    if (paragraphsBeforeStart.length === 0) {
-        start = 0;
     } else {
-        start = textareaUtils.sumTextLengthOfParagraphsArray(
-            paragraphsBeforeStart as HTMLParagraphElement[],
-            divElement
-        );
-    }
-
-    const paragraphsBeforeEnd = Array.from(divElement.childNodes).slice(
-        0,
-        endPIndex
-    );
-
-    if (paragraphsBeforeEnd.length === 0) {
-        end = 0;
-    } else {
-        end = textareaUtils.sumTextLengthOfParagraphsArray(
-            paragraphsBeforeEnd as HTMLParagraphElement[],
-            divElement
-        );
-    }
-
-    /**
-     * Add the length of all the nodes from the start of the current
-     * paragraph and up to the cursor
-     */
-
-    if ((startContainer as Element).tagName === "P") {
         /**
-         * Handle the case when startContainer is a paragraph. In this case, we
-         * add the length of all the child nodes of the paragraph up to, but
-         * excluding, the node at startOffset.
+         * GET THE END PARAGRAPH
          */
+        const endParagraph = textareaUtils.getParentParagraph(endContainer);
 
-        if (
-            startContainer.textContent?.length !== undefined &&
-            startContainer.textContent.length > 0
-        ) {
-            const nodesBeforeStartOffset = Array.from(
-                startContainer.childNodes
-            ).slice(0, startOffset);
-
-            start = textareaUtils.sumTextLengthOfNodesArray(
-                nodesBeforeStartOffset,
-                start
-            );
-        }
-    } else if (startContainer.nodeType === 3) {
-        /**
-         * Handle the case when startContainer is a text node. In this case, we
-         * sum the length of all the nodes before the startContainer in the
-         * parent paragraph, then we increment the result by startOffset.
-         */
-
-        const textLengthBeforeStartContainer =
-            textareaUtils.getTextLengthBeforeCurrentTextNode(
-                startContainer as Text,
-                startParagraph
-            );
-
-        if (textLengthBeforeStartContainer < 0) {
+        if (!endParagraph) {
             return { start: null, end: null };
         }
 
-        start += startOffset + textLengthBeforeStartContainer;
-    }
-
-    if ((endContainer as Element).tagName === "P") {
         /**
-         * Handle the case when endContainer is a paragraph. In this case, we
-         * add the length of all the child nodes of the paragraph up to, but
-         * excluding, the node at endOffset.
+         * CALCULATE TEXT LENGTH BEFORE END PARAGRAPH
          */
+        const endPIndex = textareaUtils.findNodeInParent(
+            divElement,
+            endParagraph
+        );
 
-        if (
-            endContainer.textContent?.length !== undefined &&
-            endContainer.textContent.length > 0
-        ) {
-            const nodesBeforeEndOffset = Array.from(
-                endContainer.childNodes
-            ).slice(0, endOffset);
+        const paragraphsBeforeEnd = Array.from(divElement.childNodes).slice(
+            0,
+            endPIndex
+        );
 
-            end = textareaUtils.sumTextLengthOfNodesArray(
-                nodesBeforeEndOffset,
-                end
+        if (paragraphsBeforeEnd.length === 0) {
+            end = 0;
+        } else {
+            end = textareaUtils.sumTextLengthOfParagraphsArray(
+                paragraphsBeforeEnd as HTMLParagraphElement[],
+                divElement
             );
         }
-    } else if (endContainer.nodeType === 3) {
-        /**
-         * Handle the case when endContainer is a text node. In this case, we
-         * sum the length of all the nodes before the endContainer in the
-         * parent paragraph, then we increment the result by endOffset.
-         */
 
-        const textLengthBeforeEndContainer =
-            textareaUtils.getTextLengthBeforeCurrentTextNode(
-                endContainer as Text,
-                endParagraph
-            );
+        if ((endContainer as Element).tagName === "P") {
+            /**
+             * Handle the case when endContainer is a paragraph. In this case, we
+             * add the length of all the child nodes of the paragraph up to, but
+             * excluding, the node at endOffset.
+             */
 
-        if (textLengthBeforeEndContainer < 0) {
-            return { start: null, end: null };
+            if (
+                endContainer.textContent?.length !== undefined &&
+                endContainer.textContent.length > 0
+            ) {
+                const nodesBeforeEndOffset = Array.from(
+                    endContainer.childNodes
+                ).slice(0, endOffset);
+
+                end = textareaUtils.sumTextLengthOfNodesArray(
+                    nodesBeforeEndOffset,
+                    end
+                );
+            }
+        } else if (endContainer.nodeType === 3) {
+            /**
+             * Handle the case when endContainer is a text node. In this case, we
+             * sum the length of all the nodes before the endContainer in the
+             * parent paragraph, then we increment the result by endOffset.
+             */
+
+            const textLengthBeforeEndContainer =
+                textareaUtils.getTextLengthBeforeCurrentTextNode(
+                    endContainer as Text,
+                    endParagraph
+                );
+
+            if (textLengthBeforeEndContainer < 0) {
+                return { start: null, end: null };
+            }
+            end += endOffset + textLengthBeforeEndContainer;
         }
-        end += endOffset + textLengthBeforeEndContainer;
     }
 
     return { start, end };
@@ -229,7 +244,7 @@ function dispatchCursorChangeEvent(
         return;
     }
 
-    const ev = new CustomEvent<curorChangeDetail>(cursorChangeEvent, {
+    const ev = new CustomEvent<CurorChangeDetail>(cursorChangeEvent, {
         detail: { start, end },
     });
 

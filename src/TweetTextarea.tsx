@@ -23,8 +23,8 @@ import React, { useState, useEffect, useRef, forwardRef } from "react";
 import patterns from "./lib/patterns";
 import textareaListeners from "./lib/textareaListeners";
 import customEvents, {
-    textUpdateDetail,
-    curorChangeDetail,
+    TextUpdateDetail,
+    CurorChangeDetail,
 } from "./lib/customEvents";
 import "./static/editorStyles.css";
 
@@ -37,8 +37,8 @@ export interface TweetTextareaProps
     > {
     highlightClassName?: string;
     placeholder?: string;
-    onTextUpdate?: (event: CustomEvent<textUpdateDetail>) => void;
-    onCursorChange?: (event: CustomEvent<curorChangeDetail>) => void;
+    onTextUpdate?: (event: CustomEvent<TextUpdateDetail>) => void;
+    onCursorChange?: (event: CustomEvent<CurorChangeDetail>) => void;
 }
 
 const TweetTextarea = forwardRef<HTMLDivElement | null, TweetTextareaProps>(
