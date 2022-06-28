@@ -816,6 +816,91 @@ function findTextNode(node: Node): Text | null {
     return null;
 }
 
+function sumTextLengthOfNodesArray(
+    arr: Node[],
+    initialValue: number = 0
+): number {
+    /**
+     * Utility function that calculates the text length of all the nodes in an
+     * array.
+     */
+
+    return arr.reduce((curLength, p) => {
+        if (p.textContent?.length === undefined) {
+            return curLength;
+        }
+
+        return curLength + p.textContent.length;
+    }, initialValue);
+}
+
+function sumTextLengthOfParagraphsArray(
+    arr: HTMLParagraphElement[],
+    parentElement: Element
+): number {
+    /**
+     * Utility function that calculates the text length of all paragraph
+     * elements in an array, taking into account the number of newline
+     * characters between these paragraph elements.
+     */
+
+    // Calculate how many new line characters will be in the
+    // text. If the cursor is at the last paragraph of the
+    // textarea, then the number of new line characters will be
+    // 1 subtracted from the number of paragraphs inside the
+    // textarea, because the last paragraph won't have a new
+    // line. Otherwise, it will be the number of all paragraphs
+    // before the cursor position.
+    const newlineCount =
+        arr.length < parentElement.childNodes.length
+            ? arr.length
+            : arr.length - 1;
+
+    return sumTextLengthOfNodesArray(arr, newlineCount);
+}
+
+function getTextLengthBeforeCurrentTextNode(
+    textNode: Text,
+    parentParagraph: HTMLParagraphElement
+): number {
+    /**
+     * Utililty function that calculates the text length of all the nodes
+     * before a selected text node in a paragraph.
+     * It returns the text length if the calculation is successful or a negative
+     * error code.
+     */
+
+    const INVALID = -1;
+
+    // Find the immediate child of the paragrpah. If the text node is formatted
+    // then the immediate child would be its parent element. Otherwise, it
+    // would be the text node itself.
+    const paragraphImmediateChild =
+        textNode.parentElement?.tagName === "P"
+            ? textNode
+            : textNode.parentElement;
+
+    if (!paragraphImmediateChild) {
+        return INVALID;
+    }
+
+    const immediateChildIndex = textareaUtils.findNodeInParent(
+        parentParagraph,
+        paragraphImmediateChild
+    );
+
+    if (immediateChildIndex === undefined) {
+        return INVALID;
+    }
+
+    const nodesBeforeCurrent = Array.from(parentParagraph.childNodes).slice(
+        0,
+        immediateChildIndex
+    );
+
+    return sumTextLengthOfNodesArray(nodesBeforeCurrent, 0);
+}
+
 const textareaUtils = {
     formatAfterUserInput,
     formatAfterNewParagraph,
@@ -830,6 +915,9 @@ const textareaUtils = {
     getParentParagraph,
     getTextNodeAtStart,
     getTextNodeAtEnd,
+    sumTextLengthOfNodesArray,
+    sumTextLengthOfParagraphsArray,
+    getTextLengthBeforeCurrentTextNode,
 };
 
 export default textareaUtils;

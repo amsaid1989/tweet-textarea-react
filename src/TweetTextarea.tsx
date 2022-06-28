@@ -41,15 +41,6 @@ export interface TweetTextareaProps
     onCursorChange?: (event: CustomEvent<curorChangeDetail>) => void;
 }
 
-/**
- * TODO (Abdelrahman): rather than supporting the onBeforeInput and onInput
- * events, create a custom 'textchanged' event and add an onTextChanged
- * prop, for the users of the editor to use to pass their event listeners.
- *
- * The 'textchanged' event will be dispatched from the beforeInput, paste
- * and input listeners that are defined inside the component, whenever the
- * text inside the editor is changed.
- */
 const TweetTextarea = forwardRef<HTMLDivElement | null, TweetTextareaProps>(
     (
         {
