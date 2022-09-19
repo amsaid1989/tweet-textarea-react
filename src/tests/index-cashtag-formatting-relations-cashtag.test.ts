@@ -10,7 +10,7 @@ test.describe("Cashtags", async () => {
             test("If the user types the $ character immediately before a highlighted cashtag, with no characters separating them, then the highlighting will be removed", async ({
                 page,
             }) => {
-                const editor = page.locator("div.tweet-textarea");
+                const editor = page.locator("div.input-area");
 
                 await editor.type("Hello $google", { delay: 100 });
 
@@ -31,7 +31,7 @@ test.describe("Cashtags", async () => {
             test("If the user types the $ character after a highlighted cashtag, then the highlighting will be maintained, but the new $ character will not be highlighted", async ({
                 page,
             }) => {
-                const editor = page.locator("div.tweet-textarea");
+                const editor = page.locator("div.input-area");
 
                 await editor.type("Hello $google$", { delay: 100 });
 
@@ -45,7 +45,7 @@ test.describe("Cashtags", async () => {
             test("If we have multiple cashtags one after the other, with no non-word characters separating them, then only the first of them will be highlighted", async ({
                 page,
             }) => {
-                const editor = page.locator("div.tweet-textarea");
+                const editor = page.locator("div.input-area");
 
                 await editor.type("$AMZN$GOOGLE", { delay: 100 });
 

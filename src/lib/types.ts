@@ -39,3 +39,30 @@ export interface INodeTriplet {
     start: INodeAndOffset;
     end: INodeAndOffset;
 }
+
+export interface ITextUpdateDetail {
+    currentText: string;
+}
+
+export interface ICurorChangeDetail {
+    start: number;
+    end: number;
+}
+
+export interface INullCurorChangeDetail {
+    start: null;
+    end: null;
+}
+
+export interface ITweetTextareaProps
+    extends Omit<
+        React.HTMLAttributes<HTMLDivElement>,
+        "onBeforeInput" | "onPaste" | "onInput" | "contentEditable"
+    > {
+    highlightClassName?: string;
+    placeholder?: string;
+    value?: string;
+    cursorPosition?: ICurorChangeDetail;
+    onTextUpdate?: (event: CustomEvent<ITextUpdateDetail>) => void;
+    onCursorChange?: (event: CustomEvent<ICurorChangeDetail>) => void;
+}

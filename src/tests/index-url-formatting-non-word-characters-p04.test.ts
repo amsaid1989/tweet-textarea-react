@@ -5,106 +5,103 @@ test.beforeEach(async ({ page }) => {
 });
 
 test.describe("URLs", async () => {
-    test.describe(
-        "Non-word characters in the subdirectory part of the URL",
-        async () => {
-            test("If the subdirectory part of the URL includes the @ character but not at the end, then the @ character will be included in the highlighting", async ({
-                page,
-            }) => {
-                const editor = page.locator("div.tweet-textarea");
+    test.describe("Non-word characters in the subdirectory part of the URL", async () => {
+        test("If the subdirectory part of the URL includes the @ character but not at the end, then the @ character will be included in the highlighting", async ({
+            page,
+        }) => {
+            const editor = page.locator("div.input-area");
 
-                await editor.type("hello.com/greetings@hello", { delay: 100 });
+            await editor.type("hello.com/greetings@hello", { delay: 100 });
 
-                const span = editor.locator("span");
+            const span = editor.locator("span");
 
-                await expect(span).toBeVisible();
-                await expect(await span.count()).toBe(1);
-                await expect(span).toHaveText("hello.com/greetings@hello");
-            });
+            await expect(span).toBeVisible();
+            await expect(await span.count()).toBe(1);
+            await expect(span).toHaveText("hello.com/greetings@hello");
+        });
 
-            test("If the subdirectory part of the URL ends with the $ character, then the highlighting will only apply to everything before the $ character", async ({
-                page,
-            }) => {
-                const editor = page.locator("div.tweet-textarea");
+        test("If the subdirectory part of the URL ends with the $ character, then the highlighting will only apply to everything before the $ character", async ({
+            page,
+        }) => {
+            const editor = page.locator("div.input-area");
 
-                await editor.type("hello.com/greetings$", { delay: 100 });
+            await editor.type("hello.com/greetings$", { delay: 100 });
 
-                const span = editor.locator("span");
+            const span = editor.locator("span");
 
-                await expect(span).toBeVisible();
-                await expect(await span.count()).toBe(1);
-                await expect(span).toHaveText("hello.com/greetings");
-            });
+            await expect(span).toBeVisible();
+            await expect(await span.count()).toBe(1);
+            await expect(span).toHaveText("hello.com/greetings");
+        });
 
-            test("If the subdirectory part of the URL includes the $ character but not at the end, then the $ character will be included in the highlighting", async ({
-                page,
-            }) => {
-                const editor = page.locator("div.tweet-textarea");
+        test("If the subdirectory part of the URL includes the $ character but not at the end, then the $ character will be included in the highlighting", async ({
+            page,
+        }) => {
+            const editor = page.locator("div.input-area");
 
-                await editor.type("hello.com/greetings$hello", { delay: 100 });
+            await editor.type("hello.com/greetings$hello", { delay: 100 });
 
-                const span = editor.locator("span");
+            const span = editor.locator("span");
 
-                await expect(span).toBeVisible();
-                await expect(await span.count()).toBe(1);
-                await expect(span).toHaveText("hello.com/greetings$hello");
-            });
+            await expect(span).toBeVisible();
+            await expect(await span.count()).toBe(1);
+            await expect(span).toHaveText("hello.com/greetings$hello");
+        });
 
-            test("If the subdirectory part of the URL ends with the % character, then the highlighting will only apply to everything before the % character", async ({
-                page,
-            }) => {
-                const editor = page.locator("div.tweet-textarea");
+        test("If the subdirectory part of the URL ends with the % character, then the highlighting will only apply to everything before the % character", async ({
+            page,
+        }) => {
+            const editor = page.locator("div.input-area");
 
-                await editor.type("hello.com/greetings%", { delay: 100 });
+            await editor.type("hello.com/greetings%", { delay: 100 });
 
-                const span = editor.locator("span");
+            const span = editor.locator("span");
 
-                await expect(span).toBeVisible();
-                await expect(await span.count()).toBe(1);
-                await expect(span).toHaveText("hello.com/greetings");
-            });
+            await expect(span).toBeVisible();
+            await expect(await span.count()).toBe(1);
+            await expect(span).toHaveText("hello.com/greetings");
+        });
 
-            test("If the subdirectory part of the URL includes the % character but not at the end, then the % character will be included in the highlighting", async ({
-                page,
-            }) => {
-                const editor = page.locator("div.tweet-textarea");
+        test("If the subdirectory part of the URL includes the % character but not at the end, then the % character will be included in the highlighting", async ({
+            page,
+        }) => {
+            const editor = page.locator("div.input-area");
 
-                await editor.type("hello.com/greetings%hello", { delay: 100 });
+            await editor.type("hello.com/greetings%hello", { delay: 100 });
 
-                const span = editor.locator("span");
+            const span = editor.locator("span");
 
-                await expect(span).toBeVisible();
-                await expect(await span.count()).toBe(1);
-                await expect(span).toHaveText("hello.com/greetings%hello");
-            });
+            await expect(span).toBeVisible();
+            await expect(await span.count()).toBe(1);
+            await expect(span).toHaveText("hello.com/greetings%hello");
+        });
 
-            test("If the subdirectory part of the URL ends with the & character, then the highlighting will only apply to everything before the & character", async ({
-                page,
-            }) => {
-                const editor = page.locator("div.tweet-textarea");
+        test("If the subdirectory part of the URL ends with the & character, then the highlighting will only apply to everything before the & character", async ({
+            page,
+        }) => {
+            const editor = page.locator("div.input-area");
 
-                await editor.type("hello.com/greetings&", { delay: 100 });
+            await editor.type("hello.com/greetings&", { delay: 100 });
 
-                const span = editor.locator("span");
+            const span = editor.locator("span");
 
-                await expect(span).toBeVisible();
-                await expect(await span.count()).toBe(1);
-                await expect(span).toHaveText("hello.com/greetings");
-            });
+            await expect(span).toBeVisible();
+            await expect(await span.count()).toBe(1);
+            await expect(span).toHaveText("hello.com/greetings");
+        });
 
-            test("If the subdirectory part of the URL includes the & character but not at the end, then the & character will be included in the highlighting", async ({
-                page,
-            }) => {
-                const editor = page.locator("div.tweet-textarea");
+        test("If the subdirectory part of the URL includes the & character but not at the end, then the & character will be included in the highlighting", async ({
+            page,
+        }) => {
+            const editor = page.locator("div.input-area");
 
-                await editor.type("hello.com/greetings&hello", { delay: 100 });
+            await editor.type("hello.com/greetings&hello", { delay: 100 });
 
-                const span = editor.locator("span");
+            const span = editor.locator("span");
 
-                await expect(span).toBeVisible();
-                await expect(await span.count()).toBe(1);
-                await expect(span).toHaveText("hello.com/greetings&hello");
-            });
-        }
-    );
+            await expect(span).toBeVisible();
+            await expect(await span.count()).toBe(1);
+            await expect(span).toHaveText("hello.com/greetings&hello");
+        });
+    });
 });

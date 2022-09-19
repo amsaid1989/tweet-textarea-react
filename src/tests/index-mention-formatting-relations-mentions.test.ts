@@ -10,7 +10,7 @@ test.describe("Mentions", async () => {
             test("If the user types the @ character immediately before a highlighted mention, with no characters separating them, then the highlighting will be removed", async ({
                 page,
             }) => {
-                const editor = page.locator("div.tweet-textarea");
+                const editor = page.locator("div.input-area");
 
                 await editor.type("Hello @amsaid", { delay: 100 });
 
@@ -31,7 +31,7 @@ test.describe("Mentions", async () => {
             test("If the user types the @ character, followed by other word characters, immediately before a highlighted hashtag, with no characters separating them, then the highlighting will be removed", async ({
                 page,
             }) => {
-                const editor = page.locator("div.tweet-textarea");
+                const editor = page.locator("div.input-area");
 
                 await editor.type("Hello @amsaid", { delay: 100 });
 
@@ -52,7 +52,7 @@ test.describe("Mentions", async () => {
             test("If the user types the @ character after a highlighted mention, then the highlighting will be removed", async ({
                 page,
             }) => {
-                const editor = page.locator("div.tweet-textarea");
+                const editor = page.locator("div.input-area");
 
                 await editor.type("Hello @amsaid1989@", { delay: 100 });
 
@@ -67,7 +67,7 @@ test.describe("Mentions", async () => {
             test("If we have multiple mentions one after the other, with no non-word characters separating them, then none of them should be highlighted", async ({
                 page,
             }) => {
-                const editor = page.locator("div.tweet-textarea");
+                const editor = page.locator("div.input-area");
 
                 await editor.type("@amsaid@abdelrahman", { delay: 100 });
 

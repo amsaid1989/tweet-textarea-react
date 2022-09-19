@@ -1,264 +1,48 @@
-import textareaUtils from "./textareaUtils";
-export interface TextUpdateDetail {
-    currentText: string;
-}
+/**
+ * The MIT License (MIT)
+ *
+ * Copyright © 2022 Abdelrahman Said
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+ * and associated documentation files (the “Software”), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial
+ * portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+ * LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+ * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
 
-export interface CurorChangeDetail {
-    start: number;
-    end: number;
-}
-
-interface NullCurorChangeDetail {
-    start: null;
-    end: null;
-}
+import { ITextUpdateDetail, ICurorChangeDetail } from "./types";
 
 const textUpdateEvent = "textupdate";
 const cursorChangeEvent = "cursorchange";
 
-function getCurrentText(divElement: HTMLDivElement): string {
-    const paragraphs = Array.from(divElement.childNodes);
-
-    if (paragraphs.length === 0) {
-        return "";
-    }
-
-    return paragraphs.map((p) => p.textContent).join("\n");
-}
-
-function dispatchTextUpdateEvent(divElement: HTMLDivElement): void {
-    const ev = new CustomEvent<TextUpdateDetail>(textUpdateEvent, {
-        detail: {
-            currentText: getCurrentText(divElement),
-        },
+function dispatchTextUpdateEvent(
+    divElement: HTMLDivElement,
+    currentText: ITextUpdateDetail
+): void {
+    const ev = new CustomEvent<ITextUpdateDetail>(textUpdateEvent, {
+        detail: currentText,
     });
 
     divElement.dispatchEvent(ev);
 }
 
-function getCursorLocation(
-    divElement: HTMLDivElement,
-    range: Range
-): CurorChangeDetail | NullCurorChangeDetail {
-    let start: number;
-    let end: number;
-
-    if (divElement.childNodes.length === 0) {
-        start = end = 0;
-
-        return { start, end };
-    }
-
-    let { startContainer, startOffset, endContainer, endOffset } = range;
-
-    if (startContainer === divElement) {
-        const paragraphsBeforeStartOffset = Array.from(
-            divElement.childNodes
-        ).slice(0, startOffset);
-
-        if (paragraphsBeforeStartOffset.length === 0) {
-            start = 0;
-        } else {
-            start = textareaUtils.sumTextLengthOfParagraphsArray(
-                paragraphsBeforeStartOffset as HTMLParagraphElement[],
-                divElement
-            );
-        }
-    } else {
-        /**
-         * GET THE START PARAGRAPH
-         */
-        const startParagraph = textareaUtils.getParentParagraph(startContainer);
-
-        if (!startParagraph) {
-            return { start: null, end: null };
-        }
-
-        /**
-         * CALCULATE TEXT LENGTH BEFORE START PARAGRAPH
-         */
-        const startPIndex = textareaUtils.findNodeInParent(
-            divElement,
-            startParagraph
-        );
-
-        if (startPIndex === undefined) {
-            return { start: null, end: null };
-        }
-
-        const paragraphsBeforeStart = Array.from(divElement.childNodes).slice(
-            0,
-            startPIndex
-        );
-
-        if (paragraphsBeforeStart.length === 0) {
-            start = 0;
-        } else {
-            start = textareaUtils.sumTextLengthOfParagraphsArray(
-                paragraphsBeforeStart as HTMLParagraphElement[],
-                divElement
-            );
-        }
-
-        /**
-         * Add the length of all the nodes from the start of the current
-         * paragraph and up to the cursor
-         */
-
-        if ((startContainer as Element).tagName === "P") {
-            /**
-             * Handle the case when startContainer is a paragraph. In this case, we
-             * add the length of all the child nodes of the paragraph up to, but
-             * excluding, the node at startOffset.
-             */
-
-            if (
-                startContainer.textContent?.length !== undefined &&
-                startContainer.textContent.length > 0
-            ) {
-                const nodesBeforeStartOffset = Array.from(
-                    startContainer.childNodes
-                ).slice(0, startOffset);
-
-                start = textareaUtils.sumTextLengthOfNodesArray(
-                    nodesBeforeStartOffset,
-                    start
-                );
-            }
-        } else if (startContainer.nodeType === 3) {
-            /**
-             * Handle the case when startContainer is a text node. In this case, we
-             * sum the length of all the nodes before the startContainer in the
-             * parent paragraph, then we increment the result by startOffset.
-             */
-
-            const textLengthBeforeStartContainer =
-                textareaUtils.getTextLengthBeforeCurrentTextNode(
-                    startContainer as Text,
-                    startParagraph
-                );
-
-            if (textLengthBeforeStartContainer < 0) {
-                return { start: null, end: null };
-            }
-
-            start += startOffset + textLengthBeforeStartContainer;
-        }
-    }
-
-    if (endContainer === divElement) {
-        const paragraphsBeforeEndOffset = Array.from(
-            divElement.childNodes
-        ).slice(0, endOffset);
-
-        if (paragraphsBeforeEndOffset.length === 0) {
-            end = 0;
-        } else {
-            end = textareaUtils.sumTextLengthOfParagraphsArray(
-                paragraphsBeforeEndOffset as HTMLParagraphElement[],
-                divElement
-            );
-        }
-    } else {
-        /**
-         * GET THE END PARAGRAPH
-         */
-        const endParagraph = textareaUtils.getParentParagraph(endContainer);
-
-        if (!endParagraph) {
-            return { start: null, end: null };
-        }
-
-        /**
-         * CALCULATE TEXT LENGTH BEFORE END PARAGRAPH
-         */
-        const endPIndex = textareaUtils.findNodeInParent(
-            divElement,
-            endParagraph
-        );
-
-        const paragraphsBeforeEnd = Array.from(divElement.childNodes).slice(
-            0,
-            endPIndex
-        );
-
-        if (paragraphsBeforeEnd.length === 0) {
-            end = 0;
-        } else {
-            end = textareaUtils.sumTextLengthOfParagraphsArray(
-                paragraphsBeforeEnd as HTMLParagraphElement[],
-                divElement
-            );
-        }
-
-        if ((endContainer as Element).tagName === "P") {
-            /**
-             * Handle the case when endContainer is a paragraph. In this case, we
-             * add the length of all the child nodes of the paragraph up to, but
-             * excluding, the node at endOffset.
-             */
-
-            if (
-                endContainer.textContent?.length !== undefined &&
-                endContainer.textContent.length > 0
-            ) {
-                const nodesBeforeEndOffset = Array.from(
-                    endContainer.childNodes
-                ).slice(0, endOffset);
-
-                end = textareaUtils.sumTextLengthOfNodesArray(
-                    nodesBeforeEndOffset,
-                    end
-                );
-            }
-        } else if (endContainer.nodeType === 3) {
-            /**
-             * Handle the case when endContainer is a text node. In this case, we
-             * sum the length of all the nodes before the endContainer in the
-             * parent paragraph, then we increment the result by endOffset.
-             */
-
-            const textLengthBeforeEndContainer =
-                textareaUtils.getTextLengthBeforeCurrentTextNode(
-                    endContainer as Text,
-                    endParagraph
-                );
-
-            if (textLengthBeforeEndContainer < 0) {
-                return { start: null, end: null };
-            }
-            end += endOffset + textLengthBeforeEndContainer;
-        }
-    }
-
-    return { start, end };
-}
-
 function dispatchCursorChangeEvent(
     divElement: HTMLDivElement,
-    range: Range
+    cursorPosition: ICurorChangeDetail
 ): void {
-    const { start, end } = getCursorLocation(divElement, range);
-
-    if (start === null || end === null) {
-        return;
-    }
-
-    const ev = new CustomEvent<CurorChangeDetail>(cursorChangeEvent, {
-        detail: { start, end },
+    const ev = new CustomEvent<ICurorChangeDetail>(cursorChangeEvent, {
+        detail: cursorPosition,
     });
 
-    /**
-     * DEBUG (Abdelrahman): Dispatching many custom events in quick succession
-     * seems to bring the browser to a crawl. If the user types some text very
-     * quickly, the browser tab stops responding and nothing that the user types
-     * after that appears in the textarea. Worst of all, it doesn't seem to
-     * recover from that.
-     *
-     * After brief investigation, it seems that the culprit is the dispatchEvent
-     * function rather than the code in the getCursorLocation function, because
-     * even dispatching a simple number, seems to cause the issue.
-     */
     divElement.dispatchEvent(ev);
 }
 

@@ -8,7 +8,7 @@ test.describe("Paragraphs", async () => {
     test("When user types some text, a paragraph element is created to contain that text", async ({
         page,
     }) => {
-        const editor = page.locator("div.tweet-textarea");
+        const editor = page.locator("div.input-area");
 
         await editor.type("Hello from TweetTextarea");
 
@@ -24,7 +24,7 @@ test.describe("Paragraphs", async () => {
     test("When user presses Enter in an empty editor, it should create new paragraphs", async ({
         page,
     }) => {
-        const editor = page.locator("div.tweet-textarea");
+        const editor = page.locator("div.input-area");
 
         await editor.press("Enter");
 
@@ -40,7 +40,7 @@ test.describe("Paragraphs", async () => {
     test("When user presses Backspace in an empty paragraph, it should be deleted", async ({
         page,
     }) => {
-        const editor = page.locator("div.tweet-textarea");
+        const editor = page.locator("div.input-area");
 
         await editor.press("Enter", { delay: 1000 });
 
@@ -54,7 +54,7 @@ test.describe("Paragraphs", async () => {
     test("When user presses Enter at the end of a paragraph a new empty paragraph should be created", async ({
         page,
     }) => {
-        const editor = page.locator("div.tweet-textarea");
+        const editor = page.locator("div.input-area");
 
         await editor.type("Hello from TweetTextarea", { delay: 100 });
 
@@ -70,7 +70,7 @@ test.describe("Paragraphs", async () => {
     test("When user presses Enter in the middle of a paragraph, a new paragraph should be created moving all text after cursor to the new paragraph", async ({
         page,
     }) => {
-        const editor = page.locator("div.tweet-textarea");
+        const editor = page.locator("div.input-area");
 
         await editor.type("Hello from TweetTextarea", { delay: 100 });
 
@@ -90,7 +90,7 @@ test.describe("Paragraphs", async () => {
     test("When user presses Enter in the middle of a formatted element, the formatting should be recalculated", async ({
         page,
     }) => {
-        const editor = page.locator("div.tweet-textarea");
+        const editor = page.locator("div.input-area");
 
         await editor.type("Hello from #100DaysOfCode", { delay: 100 });
 

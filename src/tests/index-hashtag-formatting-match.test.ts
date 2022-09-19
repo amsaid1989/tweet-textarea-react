@@ -9,7 +9,7 @@ test.describe("Hashtags", async () => {
         test("If the user types something after the #, and the result matches the hashtag pattern, it should be highlighted", async ({
             page,
         }) => {
-            const editor = page.locator("div.tweet-textarea");
+            const editor = page.locator("div.input-area");
 
             await editor.type("Hello #100DaysOfCode", { delay: 100 });
 
@@ -23,7 +23,7 @@ test.describe("Hashtags", async () => {
         test("When the user adds a non-word character after a sequence of word characters that match the hashtag pattern, then the formatting should stop before the non-word character", async ({
             page,
         }) => {
-            const editor = page.locator("div.tweet-textarea");
+            const editor = page.locator("div.input-area");
 
             await editor.type("Hello #100DaysOfCode-2022", { delay: 100 });
 
@@ -38,7 +38,7 @@ test.describe("Hashtags", async () => {
         test("If the user erases characters from a string that doesn't match the hashtag pattern, making it match, then the text should be highlighted", async ({
             page,
         }) => {
-            const editor = page.locator("div.tweet-textarea");
+            const editor = page.locator("div.input-area");
 
             await editor.type("Hello #100-days", { delay: 100 });
 
