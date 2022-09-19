@@ -9,7 +9,7 @@ test.describe("URLs", async () => {
         test("If the user types a string that matches the URL pattern, then it should be highlighted", async ({
             page,
         }) => {
-            const editor = page.locator("div.tweet-textarea");
+            const editor = page.locator("div.input-area");
 
             await editor.type("hello.com", { delay: 100 });
 
@@ -23,7 +23,7 @@ test.describe("URLs", async () => {
         test("http and https are allowed as part of the URL", async ({
             page,
         }) => {
-            const editor = page.locator("div.tweet-textarea");
+            const editor = page.locator("div.input-area");
 
             await editor.type("http://google.com https://google.com", {
                 delay: 100,
@@ -39,7 +39,7 @@ test.describe("URLs", async () => {
         test("'www.' should be allowed as part of the URL", async ({
             page,
         }) => {
-            const editor = page.locator("div.tweet-textarea");
+            const editor = page.locator("div.input-area");
 
             await editor.type("www.hello.com", { delay: 100 });
 
@@ -53,7 +53,7 @@ test.describe("URLs", async () => {
         test("Subdomains should be allowed and highlighted as part of the URL", async ({
             page,
         }) => {
-            const editor = page.locator("div.tweet-textarea");
+            const editor = page.locator("div.input-area");
 
             await editor.type("test.hello.com", { delay: 100 });
 
@@ -67,7 +67,7 @@ test.describe("URLs", async () => {
         test("Dots and hyphens are allowed in the top level domain part", async ({
             page,
         }) => {
-            const editor = page.locator("div.tweet-textarea");
+            const editor = page.locator("div.input-area");
 
             await editor.type("the-wizard-apprentice.com", { delay: 100 });
 
@@ -81,7 +81,7 @@ test.describe("URLs", async () => {
         test("Subdirectories should be allowed and highlighted as part of a URL", async ({
             page,
         }) => {
-            const editor = page.locator("div.tweet-textarea");
+            const editor = page.locator("div.input-area");
 
             await editor.type("hello.com/greetings", { delay: 100 });
 
@@ -95,7 +95,7 @@ test.describe("URLs", async () => {
         test("All word characters and some non-word characters should be allowed in the subdirectory part of the URL", async ({
             page,
         }) => {
-            const editor = page.locator("div.tweet-textarea");
+            const editor = page.locator("div.input-area");
 
             await editor.type("hello.com/greeting&salutations$hi%test.html", {
                 delay: 100,
@@ -113,7 +113,7 @@ test.describe("URLs", async () => {
         test("If the user erases characters from a string that is not highlighted as URL, making it match the URL pattern, then it will be highlighted", async ({
             page,
         }) => {
-            const editor = page.locator("div.tweet-textarea");
+            const editor = page.locator("div.input-area");
 
             await editor.type("hello .com", { delay: 100 });
 

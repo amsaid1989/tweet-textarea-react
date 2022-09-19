@@ -42,7 +42,7 @@ function App() {
 }
 ```
 
-The `TweetTextarea` component supports all attributes that are supported by the `div` element, except for `contentEditable` which is required for the component to work. If you try to pass `contentEditable` to the component, then your React app will probably not compile if you are using `TypeScript`, or your attribute will be overridden if you are using `JavaScript`.
+The `TweetTextarea` component supports all attributes that are supported by the `div` element, except for `contentEditable`, `onBeforeInput`, `onPaste`, and `onInput` which are required for the component to work. If you try to pass any of these attributes to the component, then your React app will probably not compile if you are using `TypeScript`, or your attribute will be overridden if you are using `JavaScript`.
 
 The component comes with two sets of default styles applied. The first defines what the textarea itself looks like. This can be overridden by passing a custom class when using the component.
 
@@ -59,6 +59,76 @@ function App() {
     return <TweetTextarea highlightClassName="custom-highlight" />;
 }
 ```
+
+If you would like to use the component as part of an app where a parent component can pass text to and receive text from the `TweetTextarea` component, you will need to use a combination of the `value`, `cursorPosition`, `onTextUpdate` and `onCursorChange` attributes. They all work together to maintain the internal state of the component and ensure that the parent component is updated when that state changes.
+
+Here is a simple example of a parent component that passes all of those attributes to the `TweetTextarea` component.
+
+```typescript
+function App() {
+    const {tweetText, setTweetText} = useState<string>("");
+    const {textCursorPosition, setTextCursorPosition} = useState<ICursorChangeDetail>({start: 0, end: 0});
+
+    return <TweetTextarea 
+                value={tweetText}
+                cursorPosition={textCursorPosition}
+                onTextUpdate={handleTextUpdate}
+                onCursorChange={handleCursorPositionChange}
+           />;
+}
+```
+
+As you can see from this example, the `value` attribute requires a simple string. However, the `cursorPosition` attribute requires an object of type `ICursorChangeDetail` which is exported by the component. This object needs to include two properties of the type `number`. The properties are `start` and `end`.
+
+To update the parent component's state from the `TweetTextarea` component, you will need to use the two event listeners passed to the `onTextUpdate` and `onCursorChange` attributes.
+
+Here is an example of what these two event listeners could look like (Code defining state objects and rendering the component is removed for brevity)
+
+```typescript
+function App() {
+    ...
+
+    const handleTextUpdate = (event) => {
+        setTweetText(event.detail.currentText);
+    }
+
+    const handleCursorPositionChange = (event) => {
+        setTextCursorPosition(event.detail)
+    }
+
+    ...
+}
+```
+
+Going in the opposite direction (i.e. updating the `TweetTextarea` internal state from the parent component) is slightly more complicated at the moment. There may be a chance to simplify this process in the future, but for now, you will need to make sure that all the attributes (`value`, `cursorPosition`, `onTextUpdate` and `onCursorChange`) are passed to the `TweetTextarea`. You will then need to create a function that correctly inserts the text, updates the cursor position and updates the state of parent component, prompting an update to the internal state of the `TweetTextarea` component.
+
+The following is an example of a simple function that uses the `tweetText` and `textCursorPosition` state objects to insert a text into the `TweetTextarea` component, making sure to update the cursor position accordingly.
+
+```typescript
+function App() {
+    ...
+
+    const insertTextAtCursor = (textToInsert) => {
+        // Split the text at the cursor position
+        const before = tweetText.slice(0, textCursorPosition.start);
+        const after = tweetText.slice(textCursorPosition.end);
+
+        // Insert the new text
+        const updatedText = before + textToInsert + after;
+
+        // Calculate the new cursor position
+        const newCursorPosition = textCursorPosition.start + textToInsert.length;
+
+        // Update the parent component state
+        setTextCursorPosition({start: newCursorPosition, end: newCursorPosition});
+        setTweetText(updatedText);
+    }
+
+    ...
+}
+```
+
+Once the state of the parent component is updated, and assuming you passed all the attributes correctly, the internal state of the `TweetTextarea` component will be updated to reflect the changes made in the parent component.
 
 ## Contributing
 
@@ -139,7 +209,7 @@ yarn start
 
 In your browser, navigate to the location of the app (usually `localhost:3000` when using `create-react-app`).
 
-You should now see the component rendered and you should be able to type text into. Additionally, URLs, hashtags, user mentions and cashtags should be highlighted properly.
+You should now see the component rendered and you should be able to type text into it. Additionally, URLs, hashtags, user mentions and cashtags should be highlighted properly.
 
 If all of that works properly for you, then you are ready to make any changes you would like to add to the component.
 

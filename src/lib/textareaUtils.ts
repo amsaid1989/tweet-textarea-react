@@ -24,6 +24,8 @@ import {
     INodeTriplet,
     INullNodeAndOffset,
     IRangeStartAndEnd,
+    ICurorChangeDetail,
+    INullCurorChangeDetail,
 } from "./types";
 
 function formatAfterUserInput(
@@ -132,24 +134,6 @@ function formatAfterNewParagraph(
         const textNode = prepParagraphForReformatting(range, currentParagraph);
 
         format(range, textNode, pattern, highlightClassName, currentParagraph);
-
-        // let firstTextNode: Text | undefined;
-
-        // if (!currentParagraph.firstChild) {
-        //     return;
-        // }
-
-        // if (currentParagraph.firstChild.nodeName === "SPAN") {
-        //     firstTextNode = currentParagraph.firstChild.firstChild as Text;
-        // } else if (currentParagraph.firstChild.nodeType === 3) {
-        //     firstTextNode = currentParagraph.firstChild as Text;
-        // }
-
-        // if (firstTextNode === undefined) {
-        //     return;
-        // }
-
-        // setCursorPosition(firstTextNode, 0);
     }
 }
 
@@ -229,44 +213,38 @@ function formatNodeTriplet(
     format(range, textNode, pattern, highlightClassName);
 }
 
-function repositionCursorInParagraph(
-    paragraphAndOffset: INodeAndOffset,
-    offset: number
+function formatAfterUpdatingTextFromParent(
+    editor: HTMLDivElement,
+    range: Range,
+    pattern: RegExp,
+    updatedText: string,
+    highlightClassName?: string
 ): void {
     /**
-     * Resets the cursor position to where it was in the text
-     * before the formatting was applied.
-     *
-     * It goes over the nodes that were added during the formatting
-     * adding the length of each one of them until it reaches a node
-     * that makes the length longer than the offset provided to
-     * the function. It set the cursor to that node.
+     * When the text is updated by the parent component, this function splits
+     * the text into paragraphs and adds them to textarea, formatting any parts
+     * that fit the RegExp pattern passed as an argument.
      */
-    const { node: parentParagraph, offset: offsetInParent } =
-        paragraphAndOffset;
 
-    let currentLength = 0;
-    for (let i = offsetInParent; i < parentParagraph.childNodes.length; i++) {
-        const child = parentParagraph.childNodes[i];
+    const splitParagraphs = updatedText.split("\n");
+    const paragraphElements = splitParagraphs.map((text) => {
+        const p = document.createElement("p");
+        p.textContent = text;
+        p.appendChild(document.createElement("br"));
+        return p;
+    });
 
-        if (child.textContent?.length !== undefined) {
-            if (currentLength + child.textContent.length < offset) {
-                currentLength += child.textContent.length;
-            } else {
-                offset -= currentLength;
+    paragraphElements.forEach((p) => {
+        editor.appendChild(p);
+    });
 
-                let startNode: Node = child;
-                if (child.nodeType !== 3) {
-                    if (child.firstChild) {
-                        startNode = child.firstChild;
-                    }
-                }
-
-                setCursorPosition(startNode, offset);
-
-                break;
-            }
+    for (let i = 0; i < editor.childNodes.length; i++) {
+        const node = editor.childNodes[i];
+        if (!node || (node.firstChild as Element).tagName === "BR") {
+            continue;
         }
+
+        format(range, node.firstChild as Text, pattern, highlightClassName);
     }
 }
 
@@ -290,7 +268,12 @@ function format(
      * making it necessary to run the match function again on the
      * text that hasn't been formatted yet.
      */
-    const matches = textNode.textContent?.matchAll(pattern);
+
+    if (!textNode.textContent) {
+        return;
+    }
+
+    const matches = textNode.textContent.matchAll(pattern);
 
     if (!matches) {
         return;
@@ -447,6 +430,111 @@ function deleteAllEditorChildren(editor: HTMLDivElement): void {
     while (editor.firstChild) {
         editor.removeChild(editor.firstChild);
     }
+}
+
+function repositionCursorInParagraph(
+    paragraphAndOffset: INodeAndOffset,
+    offset: number
+): void {
+    /**
+     * Resets the cursor position to where it was in the text
+     * before the formatting was applied.
+     *
+     * It goes over the nodes that were added during the formatting
+     * adding the length of each one of them until it reaches a node
+     * that makes the length longer than the offset provided to
+     * the function. It set the cursor to that node.
+     */
+    const { node: parentParagraph, offset: offsetInParent } =
+        paragraphAndOffset;
+
+    let currentLength = 0;
+    for (let i = offsetInParent; i < parentParagraph.childNodes.length; i++) {
+        const child = parentParagraph.childNodes[i];
+
+        if ((child as Element).tagName === "BR") {
+            // Addresses an issue where the repositioning won't work correctly
+            // if the cursor is supposed to be at the end of a paragraph
+            ++currentLength;
+        }
+
+        if (child.textContent?.length !== undefined) {
+            if (currentLength + child.textContent.length < offset) {
+                currentLength += child.textContent.length;
+            } else {
+                offset -= currentLength;
+
+                let startNode: Node = child;
+                if (child.nodeType !== 3) {
+                    if (child.firstChild) {
+                        startNode = child.firstChild;
+                    }
+                }
+
+                setCursorPosition(startNode, offset);
+
+                break;
+            }
+        }
+    }
+}
+
+function repositionCursorInTextarea(
+    editor: HTMLDivElement,
+    cursorPosition: ICurorChangeDetail
+): void {
+    /**
+     * Sets the cursor position to where the user wants it in the textarea.
+     * It is useful to set the cursor in the correct position, when it gets
+     * updated by the parent component.
+     *
+     * It works by adding the length of each paragraph in the editor and once
+     * the length goes over the start location passed in the cursorPosition
+     * argument, it means that the cursor should be in the current paragraph.
+     */
+
+    if (editor.childNodes.length === 0) {
+        return;
+    }
+
+    // TODO (Abdelrahman): Figure out if there is ever a need to extract the
+    // end from the cursorPosition
+    let { start } = cursorPosition;
+    let startParagraph: ChildNode | undefined;
+
+    let textLengthToEndOfCurrentParagraph = 0;
+    for (let i = 0; i < editor.childNodes.length; i++) {
+        const currentParagraph = editor.childNodes[i];
+
+        if (
+            currentParagraph.textContent === undefined ||
+            currentParagraph.textContent?.length === undefined
+        ) {
+            continue;
+        }
+
+        // NOTE (Abdelrahman): We add 1 to account for the newline character
+        textLengthToEndOfCurrentParagraph +=
+            currentParagraph.textContent.length + 1;
+
+        if (textLengthToEndOfCurrentParagraph >= start) {
+            startParagraph = currentParagraph;
+
+            // We remove the length of the current paragraph to get the cursor
+            // offset inside of it
+            start -=
+                textLengthToEndOfCurrentParagraph -
+                (currentParagraph.textContent.length + 1);
+
+            break;
+        }
+    }
+
+    if (startParagraph === undefined) {
+        return;
+    }
+
+    repositionCursorInParagraph({ node: startParagraph, offset: 0 }, start);
 }
 
 function appendTextToParagraph(
@@ -901,13 +989,223 @@ function getTextLengthBeforeCurrentTextNode(
     return sumTextLengthOfNodesArray(nodesBeforeCurrent, 0);
 }
 
+function getCurrentText(divElement: HTMLDivElement): string {
+    const paragraphs = Array.from(divElement.childNodes);
+
+    if (paragraphs.length === 0) {
+        return "";
+    }
+
+    return paragraphs.map((p) => p.textContent).join("\n");
+}
+
+function getCursorLocation(
+    divElement: HTMLDivElement,
+    range: Range
+): ICurorChangeDetail | INullCurorChangeDetail {
+    let start: number;
+    let end: number;
+
+    if (divElement.childNodes.length === 0) {
+        start = end = 0;
+
+        return { start, end };
+    }
+
+    let { startContainer, startOffset, endContainer, endOffset } = range;
+
+    if (startContainer === divElement) {
+        const paragraphsBeforeStartOffset = Array.from(
+            divElement.childNodes
+        ).slice(0, startOffset);
+
+        if (paragraphsBeforeStartOffset.length === 0) {
+            start = 0;
+        } else {
+            start = textareaUtils.sumTextLengthOfParagraphsArray(
+                paragraphsBeforeStartOffset as HTMLParagraphElement[],
+                divElement
+            );
+        }
+    } else {
+        /**
+         * GET THE START PARAGRAPH
+         */
+        const startParagraph = textareaUtils.getParentParagraph(startContainer);
+
+        if (!startParagraph) {
+            return { start: null, end: null };
+        }
+
+        /**
+         * CALCULATE TEXT LENGTH BEFORE START PARAGRAPH
+         */
+        const startPIndex = textareaUtils.findNodeInParent(
+            divElement,
+            startParagraph
+        );
+
+        if (startPIndex === undefined) {
+            return { start: null, end: null };
+        }
+
+        const paragraphsBeforeStart = Array.from(divElement.childNodes).slice(
+            0,
+            startPIndex
+        );
+
+        if (paragraphsBeforeStart.length === 0) {
+            start = 0;
+        } else {
+            start = textareaUtils.sumTextLengthOfParagraphsArray(
+                paragraphsBeforeStart as HTMLParagraphElement[],
+                divElement
+            );
+        }
+
+        /**
+         * Add the length of all the nodes from the start of the current
+         * paragraph and up to the cursor
+         */
+
+        if ((startContainer as Element).tagName === "P") {
+            /**
+             * Handle the case when startContainer is a paragraph. In this case, we
+             * add the length of all the child nodes of the paragraph up to, but
+             * excluding, the node at startOffset.
+             */
+
+            if (
+                startContainer.textContent?.length !== undefined &&
+                startContainer.textContent.length > 0
+            ) {
+                const nodesBeforeStartOffset = Array.from(
+                    startContainer.childNodes
+                ).slice(0, startOffset);
+
+                start = textareaUtils.sumTextLengthOfNodesArray(
+                    nodesBeforeStartOffset,
+                    start
+                );
+            }
+        } else if (startContainer.nodeType === 3) {
+            /**
+             * Handle the case when startContainer is a text node. In this case, we
+             * sum the length of all the nodes before the startContainer in the
+             * parent paragraph, then we increment the result by startOffset.
+             */
+
+            const textLengthBeforeStartContainer =
+                textareaUtils.getTextLengthBeforeCurrentTextNode(
+                    startContainer as Text,
+                    startParagraph
+                );
+
+            if (textLengthBeforeStartContainer < 0) {
+                return { start: null, end: null };
+            }
+
+            start += startOffset + textLengthBeforeStartContainer;
+        }
+    }
+
+    if (endContainer === divElement) {
+        const paragraphsBeforeEndOffset = Array.from(
+            divElement.childNodes
+        ).slice(0, endOffset);
+
+        if (paragraphsBeforeEndOffset.length === 0) {
+            end = 0;
+        } else {
+            end = textareaUtils.sumTextLengthOfParagraphsArray(
+                paragraphsBeforeEndOffset as HTMLParagraphElement[],
+                divElement
+            );
+        }
+    } else {
+        /**
+         * GET THE END PARAGRAPH
+         */
+        const endParagraph = textareaUtils.getParentParagraph(endContainer);
+
+        if (!endParagraph) {
+            return { start: null, end: null };
+        }
+
+        /**
+         * CALCULATE TEXT LENGTH BEFORE END PARAGRAPH
+         */
+        const endPIndex = textareaUtils.findNodeInParent(
+            divElement,
+            endParagraph
+        );
+
+        const paragraphsBeforeEnd = Array.from(divElement.childNodes).slice(
+            0,
+            endPIndex
+        );
+
+        if (paragraphsBeforeEnd.length === 0) {
+            end = 0;
+        } else {
+            end = textareaUtils.sumTextLengthOfParagraphsArray(
+                paragraphsBeforeEnd as HTMLParagraphElement[],
+                divElement
+            );
+        }
+
+        if ((endContainer as Element).tagName === "P") {
+            /**
+             * Handle the case when endContainer is a paragraph. In this case, we
+             * add the length of all the child nodes of the paragraph up to, but
+             * excluding, the node at endOffset.
+             */
+
+            if (
+                endContainer.textContent?.length !== undefined &&
+                endContainer.textContent.length > 0
+            ) {
+                const nodesBeforeEndOffset = Array.from(
+                    endContainer.childNodes
+                ).slice(0, endOffset);
+
+                end = textareaUtils.sumTextLengthOfNodesArray(
+                    nodesBeforeEndOffset,
+                    end
+                );
+            }
+        } else if (endContainer.nodeType === 3) {
+            /**
+             * Handle the case when endContainer is a text node. In this case, we
+             * sum the length of all the nodes before the endContainer in the
+             * parent paragraph, then we increment the result by endOffset.
+             */
+
+            const textLengthBeforeEndContainer =
+                textareaUtils.getTextLengthBeforeCurrentTextNode(
+                    endContainer as Text,
+                    endParagraph
+                );
+
+            if (textLengthBeforeEndContainer < 0) {
+                return { start: null, end: null };
+            }
+            end += endOffset + textLengthBeforeEndContainer;
+        }
+    }
+
+    return { start, end };
+}
+
 const textareaUtils = {
     formatAfterUserInput,
     formatAfterNewParagraph,
     formatParagraphsAfterPasting,
+    formatAfterUpdatingTextFromParent,
     insertParagraphOnEmptyEditor,
     addNonBreakingSpace,
     deleteAllEditorChildren,
+    repositionCursorInTextarea,
     isDeletionEvent,
     appendTextToParagraph,
     setCursorPosition,
@@ -918,6 +1216,8 @@ const textareaUtils = {
     sumTextLengthOfNodesArray,
     sumTextLengthOfParagraphsArray,
     getTextLengthBeforeCurrentTextNode,
+    getCurrentText,
+    getCursorLocation,
 };
 
 export default textareaUtils;

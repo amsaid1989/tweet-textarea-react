@@ -10,7 +10,7 @@ test.describe("URLs", async () => {
             test("If we have two URLs, that don't include the protocol, sitting next to each other with nothing separating them, then they will be highlighted as 1 URL", async ({
                 page,
             }) => {
-                const editor = page.locator("div.tweet-textarea");
+                const editor = page.locator("div.input-area");
 
                 await editor.type("google.comtwitter.com", { delay: 100 });
 
@@ -24,7 +24,7 @@ test.describe("URLs", async () => {
             test("If we have two URLs, with the first one including the protocol, sitting next to each other with nothing separating them, then they will be highlighted as 1 URL", async ({
                 page,
             }) => {
-                const editor = page.locator("div.tweet-textarea");
+                const editor = page.locator("div.input-area");
 
                 await editor.type("https://google.comtwitter.com", {
                     delay: 100,
@@ -40,7 +40,7 @@ test.describe("URLs", async () => {
             test("If we have two URLs, with both including the protocol, sitting next to each other with nothing separating them, then none of them will be highlighted", async ({
                 page,
             }) => {
-                const editor = page.locator("div.tweet-textarea");
+                const editor = page.locator("div.input-area");
 
                 await editor.type("https://google.comhttps://twitter.com", {
                     delay: 100,

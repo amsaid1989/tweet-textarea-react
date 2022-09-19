@@ -10,7 +10,7 @@ test.describe("URLs", async () => {
             test("If a hashtag comes immediately after the top level domain of the URL, then the URL will be highlighted, but the hashtag will not", async ({
                 page,
             }) => {
-                const editor = page.locator("div.tweet-textarea");
+                const editor = page.locator("div.input-area");
 
                 await editor.type("hello.com#100DaysOfCode", { delay: 100 });
 
@@ -24,7 +24,7 @@ test.describe("URLs", async () => {
             test("If we add the # character before a highlighted URL that doesn't include the protocol, then the highlighting of the URL will be removed", async ({
                 page,
             }) => {
-                const editor = page.locator("div.tweet-textarea");
+                const editor = page.locator("div.input-area");
 
                 await editor.type("google.com", { delay: 100 });
 
@@ -44,7 +44,7 @@ test.describe("URLs", async () => {
             test("If we add a hashtag before a highlighted URL that doesn't include the protocol, then the highlighting of the URL will be removed", async ({
                 page,
             }) => {
-                const editor = page.locator("div.tweet-textarea");
+                const editor = page.locator("div.input-area");
 
                 await editor.type("google.com", { delay: 100 });
 
@@ -64,7 +64,7 @@ test.describe("URLs", async () => {
             test("If we add the # character before a highlighted URL that includes the protocol, then nothing will be highlighted", async ({
                 page,
             }) => {
-                const editor = page.locator("div.tweet-textarea");
+                const editor = page.locator("div.input-area");
 
                 await editor.type("https://google.com", { delay: 100 });
 
@@ -85,7 +85,7 @@ test.describe("URLs", async () => {
             test("If we add a hashtag before a highlighted URL that includes the protocol, then nothing will be highlighted", async ({
                 page,
             }) => {
-                const editor = page.locator("div.tweet-textarea");
+                const editor = page.locator("div.input-area");
 
                 await editor.type("https://google.com", { delay: 100 });
 

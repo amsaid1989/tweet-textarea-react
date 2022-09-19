@@ -55,7 +55,7 @@ function initPattern() {
                 const urlPattern = new RegExp(
                     /(?:^|[^\w@\-#$/\.])/.source +
                         "(" +
-                        /(?:https?:\/\/)?(?:(?:[^\W_]+|[^\W_][a-zA-Z0-9\-]*[^\W_])+\.)+/
+                        /(?:https?:\/\/)?(?:www\.)?(?:(?:[^\W_][a-zA-Z0-9\-]*[^\W_])+\.)+/
                             .source +
                         `(?:(?:(?:${mainTld})` +
                         /(?![@\-+])/.source +

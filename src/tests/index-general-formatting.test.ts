@@ -7,7 +7,7 @@ test.beforeEach(async ({ page }) => {
 test("When the user types some text that doesn't match any patterns, nothing should be formatted", async ({
     page,
 }) => {
-    const editor = page.locator("div.tweet-textarea");
+    const editor = page.locator("div.input-area");
 
     await editor.type("Hello from TweetTextarea");
 

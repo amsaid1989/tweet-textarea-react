@@ -9,7 +9,7 @@ test.describe("Cashtags", async () => {
         test("If the user types something after the $ character, and the result matches the cashtag pattern, it should be highlighted", async ({
             page,
         }) => {
-            const editor = page.locator("div.tweet-textarea");
+            const editor = page.locator("div.input-area");
 
             await editor.type("Hello $google", { delay: 100 });
 
@@ -23,7 +23,7 @@ test.describe("Cashtags", async () => {
         test("A suffix made of an underscore and a maximum of two alphabetical characters is allowed and should be highlighted", async ({
             page,
         }) => {
-            const editor = page.locator("div.tweet-textarea");
+            const editor = page.locator("div.input-area");
 
             await editor.type("Hello $google_uk", { delay: 100 });
 
@@ -37,7 +37,7 @@ test.describe("Cashtags", async () => {
         test("If the suffix doesn't match the rules, then only the cashtag part will be highlighted", async ({
             page,
         }) => {
-            const editor = page.locator("div.tweet-textarea");
+            const editor = page.locator("div.input-area");
 
             await editor.type("Hello $google_inc", { delay: 100 });
 
@@ -51,7 +51,7 @@ test.describe("Cashtags", async () => {
         test("When the user adds a non-word character after a sequence of word characters that match the cashtag pattern, then the formatting should stop before the non-word character", async ({
             page,
         }) => {
-            const editor = page.locator("div.tweet-textarea");
+            const editor = page.locator("div.input-area");
 
             await editor.type("Hello $google-2022", { delay: 100 });
 
@@ -65,7 +65,7 @@ test.describe("Cashtags", async () => {
         test("If the user erases characters from a string that doesn't match the cashtag pattern, making it match, then the text should be highlighted", async ({
             page,
         }) => {
-            const editor = page.locator("div.tweet-textarea");
+            const editor = page.locator("div.input-area");
 
             await editor.type("Hello $googleinc", { delay: 100 });
 

@@ -10,7 +10,7 @@ test.describe("Mentions", async () => {
             test("If the user types the # character after a highlighted mention, then the highlighting will be maintained", async ({
                 page,
             }) => {
-                const editor = page.locator("div.tweet-textarea");
+                const editor = page.locator("div.input-area");
 
                 await editor.type("Hello @amsaid1989#", { delay: 100 });
 
@@ -24,7 +24,7 @@ test.describe("Mentions", async () => {
             test("If the user types a valid hashtag after a highlighted mention, then the highlighting will be maintained", async ({
                 page,
             }) => {
-                const editor = page.locator("div.tweet-textarea");
+                const editor = page.locator("div.input-area");
 
                 await editor.type("Hello @amsaid1989#100DaysOfCode", {
                     delay: 100,
@@ -40,7 +40,7 @@ test.describe("Mentions", async () => {
             test("If the user types the # character immediately before a highlighted mention, with no characters separating them, then the highlighting will be removed", async ({
                 page,
             }) => {
-                const editor = page.locator("div.tweet-textarea");
+                const editor = page.locator("div.input-area");
 
                 await editor.type("Hello @amsaid", { delay: 100 });
 
@@ -61,7 +61,7 @@ test.describe("Mentions", async () => {
             test("If the user types the # character, followed by other word characters, immediately before a highlighted mention, with no characters separating them, then the highlighting will be removed", async ({
                 page,
             }) => {
-                const editor = page.locator("div.tweet-textarea");
+                const editor = page.locator("div.input-area");
 
                 await editor.type("Hello @amsaid", { delay: 100 });
 

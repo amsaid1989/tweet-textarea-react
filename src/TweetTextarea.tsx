@@ -22,35 +22,25 @@
 import React, { useState, useEffect, useRef, forwardRef } from "react";
 import patterns from "./lib/patterns";
 import textareaListeners from "./lib/textareaListeners";
-import customEvents, {
-    TextUpdateDetail,
-    CurorChangeDetail,
-} from "./lib/customEvents";
+import customEvents from "./lib/customEvents";
+import { ICurorChangeDetail, ITweetTextareaProps } from "./lib/types";
 import "./static/editorStyles.css";
+import textareaUtils from "./lib/textareaUtils";
 
 const STORAGE_KEY = "highlightPattern";
 
-export interface TweetTextareaProps
-    extends Omit<
-        React.HTMLAttributes<HTMLDivElement>,
-        "onBeforeInput" | "onPaste" | "onInput" | "contentEditable"
-    > {
-    highlightClassName?: string;
-    placeholder?: string;
-    onTextUpdate?: (event: CustomEvent<TextUpdateDetail>) => void;
-    onCursorChange?: (event: CustomEvent<CurorChangeDetail>) => void;
-}
-
-const TweetTextarea = forwardRef<HTMLDivElement | null, TweetTextareaProps>(
+const TweetTextarea = forwardRef<HTMLDivElement | null, ITweetTextareaProps>(
     (
         {
             className,
             highlightClassName,
             placeholder,
+            value,
+            cursorPosition,
             onTextUpdate,
             onCursorChange,
             ...htmlDivAttributes
-        }: TweetTextareaProps,
+        }: ITweetTextareaProps,
         ref: React.ForwardedRef<HTMLDivElement>
     ): JSX.Element => {
         const editorRef = useRef<HTMLDivElement | null>(null);
@@ -58,6 +48,12 @@ const TweetTextarea = forwardRef<HTMLDivElement | null, TweetTextareaProps>(
         const [pattern, setPattern] = useState<RegExp | null>(null);
 
         const [text, setText] = useState<string>("");
+
+        const [textCursorPosition, setTextCursorPosition] =
+            useState<ICurorChangeDetail>({ start: 0, end: 0 });
+
+        const [repositionCursor, setRepositionCursor] =
+            useState<boolean>(false);
 
         // Get pattern from storage and run the get pattern function on load
         useEffect(() => {
@@ -139,6 +135,74 @@ const TweetTextarea = forwardRef<HTMLDivElement | null, TweetTextareaProps>(
             };
         }, [editorRef.current, onTextUpdate, onCursorChange]);
 
+        useEffect(() => {
+            if (!editorRef || !editorRef.current) {
+                return;
+            }
+
+            if (text !== value && value !== undefined) {
+                setText(value);
+            }
+        }, [value]);
+
+        useEffect(() => {
+            if (!editorRef || !editorRef.current) {
+                return;
+            }
+
+            const currentTextInEditor = textareaUtils.getCurrentText(
+                editorRef.current
+            );
+
+            if (currentTextInEditor !== text) {
+                textareaUtils.deleteAllEditorChildren(editorRef.current);
+
+                if (text.length === 0) {
+                    editorRef.current.focus();
+                    return;
+                }
+
+                editorRef.current.focus();
+
+                const sel = document.getSelection();
+                const range = sel?.getRangeAt(0);
+
+                if (!range || !pattern) {
+                    return;
+                }
+
+                textareaUtils.formatAfterUpdatingTextFromParent(
+                    editorRef.current,
+                    range,
+                    pattern,
+                    text,
+                    highlightClassName
+                );
+
+                if (!cursorPosition) {
+                    return;
+                }
+
+                setTextCursorPosition(cursorPosition);
+                setRepositionCursor(true);
+            }
+        }, [text]);
+
+        useEffect(() => {
+            if (repositionCursor) {
+                setRepositionCursor(false);
+
+                if (!editorRef.current) {
+                    return;
+                }
+
+                textareaUtils.repositionCursorInTextarea(
+                    editorRef.current,
+                    textCursorPosition
+                );
+            }
+        }, [textCursorPosition, repositionCursor]);
+
         /* EVENT LISTENERS */
         const beforeInputListener = (
             event: React.FormEvent<HTMLDivElement>
@@ -149,13 +213,20 @@ const TweetTextarea = forwardRef<HTMLDivElement | null, TweetTextareaProps>(
 
             textareaListeners.textareaBeforeInputListener(event, editorRef);
 
-            setText(editorRef.current?.textContent || "");
-
-            if (!editorRef.current || !event.isDefaultPrevented()) {
+            if (!editorRef.current) {
                 return;
             }
 
-            customEvents.dispatchTextUpdateEvent(editorRef.current);
+            const currentText = textareaUtils.getCurrentText(editorRef.current);
+            setText(currentText);
+
+            if (!event.isDefaultPrevented()) {
+                return;
+            }
+
+            customEvents.dispatchTextUpdateEvent(editorRef.current, {
+                currentText,
+            });
         };
 
         const pasteListener = (event: React.ClipboardEvent<HTMLDivElement>) => {
@@ -170,13 +241,20 @@ const TweetTextarea = forwardRef<HTMLDivElement | null, TweetTextareaProps>(
                 highlightClassName
             );
 
-            setText(editorRef.current?.textContent || "");
-
-            if (!editorRef.current || !event.isDefaultPrevented()) {
+            if (!editorRef.current) {
                 return;
             }
 
-            customEvents.dispatchTextUpdateEvent(editorRef.current);
+            const currentText = textareaUtils.getCurrentText(editorRef.current);
+            setText(currentText);
+
+            if (!event.isDefaultPrevented()) {
+                return;
+            }
+
+            customEvents.dispatchTextUpdateEvent(editorRef.current, {
+                currentText,
+            });
         };
 
         const inputListener = (event: React.FormEvent<HTMLDivElement>) => {
@@ -191,13 +269,16 @@ const TweetTextarea = forwardRef<HTMLDivElement | null, TweetTextareaProps>(
                 highlightClassName
             );
 
-            setText(editorRef.current?.textContent || "");
-
             if (!editorRef.current) {
                 return;
             }
 
-            customEvents.dispatchTextUpdateEvent(editorRef.current);
+            const currentText = textareaUtils.getCurrentText(editorRef.current);
+            setText(currentText);
+
+            customEvents.dispatchTextUpdateEvent(editorRef.current, {
+                currentText,
+            });
         };
 
         const cursorEventDispatch = () => {
@@ -212,7 +293,19 @@ const TweetTextarea = forwardRef<HTMLDivElement | null, TweetTextareaProps>(
                 return;
             }
 
-            customEvents.dispatchCursorChangeEvent(editorRef.current, range);
+            const cursorPosition = textareaUtils.getCursorLocation(
+                editorRef.current,
+                range
+            );
+
+            if (cursorPosition.start === null || cursorPosition.end === null) {
+                return;
+            }
+
+            customEvents.dispatchCursorChangeEvent(
+                editorRef.current,
+                cursorPosition
+            );
         };
         /* END EVENT LISTENERS */
 

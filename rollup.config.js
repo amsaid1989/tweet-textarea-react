@@ -8,42 +8,42 @@ import dts from "rollup-plugin-dts";
 import pkg from "./package.json";
 
 export default defineConfig([
-    {
-        input: "src/index.ts",
-        output: [
-            {
-                file: pkg.main,
-                format: "cjs",
-                exports: "auto",
-                sourcemap: true,
-                strict: true,
-            },
-            {
-                file: pkg.module,
-                format: "esm",
-                exports: "auto",
-                sourcemap: true,
-                strict: true,
-            },
-        ],
-        plugins: [
-            resolve(),
-            commonjs(),
-            postcss(),
-            typescript({
-                tsconfig: "./tsconfig.json",
-            }),
-            command("yarn createPackage"),
-        ],
-        external: ["react"],
+  {
+    input: "src/index.ts",
+    output: [
+      {
+        file: pkg.main,
+        format: "cjs",
+        exports: "auto",
+        sourcemap: true,
+        strict: true,
+      },
+      {
+        file: pkg.module,
+        format: "esm",
+        exports: "auto",
+        sourcemap: true,
+        strict: true,
+      },
+    ],
+    plugins: [
+      resolve(),
+      commonjs(),
+      postcss(),
+      typescript({
+        tsconfig: "./tsconfig.json",
+      }),
+      command("yarn createPackage"),
+    ],
+    external: ["react"],
+  },
+  {
+    input: "dist/esm/index.d.ts",
+    output: {
+      file: "dist/index.d.ts",
+      format: "es",
     },
-    {
-        input: "dist/esm/types/index.d.ts",
-        output: {
-            file: "dist/index.d.ts",
-            format: "esm",
-        },
-        plugins: [dts()],
-        external: [/\.css$/],
-    },
+    plugins: [dts()],
+    external: [/\.css$/],
+  },
 ]);

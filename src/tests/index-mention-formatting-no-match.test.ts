@@ -9,7 +9,7 @@ test.describe("Mentions", async () => {
         test("When the user type the @ character alone, nothing should be formatted", async ({
             page,
         }) => {
-            const editor = page.locator("div.tweet-textarea");
+            const editor = page.locator("div.input-area");
 
             await editor.type("Hello @", { delay: 100 });
 
@@ -24,7 +24,7 @@ test.describe("Mentions", async () => {
         test("If the user types non-word characters immediately after the @, it shouldn't be highlighted", async ({
             page,
         }) => {
-            const editor = page.locator("div.tweet-textarea");
+            const editor = page.locator("div.input-area");
 
             await editor.type("Hello @-amsaid1989", { delay: 100 });
 
@@ -39,7 +39,7 @@ test.describe("Mentions", async () => {
         test("When the user erases characters from a string that matches the mention pattern, making it no longer matching, the highlighting should be removed", async ({
             page,
         }) => {
-            const editor = page.locator("div.tweet-textarea");
+            const editor = page.locator("div.input-area");
 
             await editor.type("Hello @amsaid", { delay: 100 });
 
@@ -58,7 +58,7 @@ test.describe("Mentions", async () => {
         test("If the user adds word characters immediately before a highlighted mention, with no non-word characters separating them, then the highlighting should be removed", async ({
             page,
         }) => {
-            const editor = page.locator("div.tweet-textarea");
+            const editor = page.locator("div.input-area");
 
             await editor.type("Hello @amsaid1989", { delay: 100 });
 

@@ -9,7 +9,7 @@ test.describe("Cashtags", async () => {
         test("When the user types the $ character alone, nothing should be formatted", async ({
             page,
         }) => {
-            const editor = page.locator("div.tweet-textarea");
+            const editor = page.locator("div.input-area");
 
             await editor.type("Hello $");
 
@@ -24,7 +24,7 @@ test.describe("Cashtags", async () => {
         test("If the user types word characters after the $, but the result doesn't match the cashtag pattern, it shouldn't be highlighted", async ({
             page,
         }) => {
-            const editor = page.locator("div.tweet-textarea");
+            const editor = page.locator("div.input-area");
 
             await editor.type("Hello $100 $googleinc $goog22");
 
@@ -39,7 +39,7 @@ test.describe("Cashtags", async () => {
         test("If the user types an underscore immediately after the $ character, it shouldn't be highlighted", async ({
             page,
         }) => {
-            const editor = page.locator("div.tweet-textarea");
+            const editor = page.locator("div.input-area");
 
             await editor.type("Hello $_googl");
 
@@ -54,7 +54,7 @@ test.describe("Cashtags", async () => {
         test("If the user types non-word characters immediately after the $, it shouldn't be highlighted", async ({
             page,
         }) => {
-            const editor = page.locator("div.tweet-textarea");
+            const editor = page.locator("div.input-area");
 
             await editor.type("Hello $-google");
 
@@ -69,7 +69,7 @@ test.describe("Cashtags", async () => {
         test("When the user erases characters from a string that matches the cashtag pattern, making it no longer matching, the highlighting should be removed", async ({
             page,
         }) => {
-            const editor = page.locator("div.tweet-textarea");
+            const editor = page.locator("div.input-area");
 
             await editor.type("Hello $google");
 
@@ -88,7 +88,7 @@ test.describe("Cashtags", async () => {
         test("If the user adds word characters immediately before a highlighted cashtag, with no non-word characters separating them, then the highlighting should be removed", async ({
             page,
         }) => {
-            const editor = page.locator("div.tweet-textarea");
+            const editor = page.locator("div.input-area");
 
             await editor.type("Hello $google");
 

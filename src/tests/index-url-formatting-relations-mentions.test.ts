@@ -10,7 +10,7 @@ test.describe("URLs", async () => {
             test("If a user mention comes immediately after the top level domain, then neither the URL nor the user mention will be highlighted", async ({
                 page,
             }) => {
-                const editor = page.locator("div.tweet-textarea");
+                const editor = page.locator("div.input-area");
 
                 await editor.type("hello.com@amsaid1989", { delay: 100 });
 
@@ -25,7 +25,7 @@ test.describe("URLs", async () => {
             test("If a user mention comes immediately after the top level domain, but there is another part of the URL that can work as top level domain, then that part will be highlighted", async ({
                 page,
             }) => {
-                const editor = page.locator("div.tweet-textarea");
+                const editor = page.locator("div.input-area");
 
                 await editor.type("hello.co.uk@amsaid198", { delay: 100 });
 
@@ -39,7 +39,7 @@ test.describe("URLs", async () => {
             test("If we add the @ character before a highlighted URL that doesn't include the protocol, then the highlighting of the URL will be removed", async ({
                 page,
             }) => {
-                const editor = page.locator("div.tweet-textarea");
+                const editor = page.locator("div.input-area");
 
                 await editor.type("google.com", { delay: 100 });
 
@@ -59,7 +59,7 @@ test.describe("URLs", async () => {
             test("If we add a user mention before a highlighted URL that doesn't include the protocol, then the highlighting of the URL will be removed", async ({
                 page,
             }) => {
-                const editor = page.locator("div.tweet-textarea");
+                const editor = page.locator("div.input-area");
 
                 await editor.type("google.com", { delay: 100 });
 
@@ -79,7 +79,7 @@ test.describe("URLs", async () => {
             test("If we add the @ character before a highlighted URL that includes the protocol, then nothing will be highlighted", async ({
                 page,
             }) => {
-                const editor = page.locator("div.tweet-textarea");
+                const editor = page.locator("div.input-area");
 
                 await editor.type("https://google.com", { delay: 100 });
 
@@ -100,7 +100,7 @@ test.describe("URLs", async () => {
             test("If we add a user mention before a highlighted URL that includes the protocol, then nothing will be highlighted", async ({
                 page,
             }) => {
-                const editor = page.locator("div.tweet-textarea");
+                const editor = page.locator("div.input-area");
 
                 await editor.type("https://google.com", { delay: 100 });
 
