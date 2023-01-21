@@ -1,27 +1,31 @@
+.tweet-textarea {
+  word-break: break-all;
+}
+
 .tweet-textarea-general-style {
-    padding: 1em;
-    border: solid 1px #bbb;
+  padding: 1em;
+  border: solid 1px #bbb;
 }
 
 div p {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
 .placeholder {
-    position: absolute;
-    color: #bbb;
-    padding: 0;
-    margin: 0;
-    pointer-events: none;
+  position: absolute;
+  color: #bbb;
+  padding: 0;
+  margin: 0;
+  pointer-events: none;
 }
 
 .input-area {
-    height: 100%;
-    outline: none;
+  height: 100%;
+  outline: none;
 }
 
 .tweet-textarea-entity-highlighting {
-    color: cadetblue;
-    font-weight: bold;
+  color: cadetblue;
+  font-weight: bold;
 }
