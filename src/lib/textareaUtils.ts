@@ -31,6 +31,8 @@ import {
 function formatAfterUserInput(
 	range: Range,
 	pattern: RegExp,
+	repeat: boolean,
+	repeatCount: number,
 	highlightClassName?: string
 ) {
 	/**
@@ -97,6 +99,8 @@ function formatAfterUserInput(
 		pattern,
 		parentData,
 		nodeTriplet,
+		repeat,
+		repeatCount,
 		highlightClassName
 	);
 
@@ -173,6 +177,8 @@ function formatNodeTriplet(
 	pattern: RegExp,
 	parentAndOffset: INodeAndOffset,
 	nodeTriplet: INodeTriplet,
+	repeat: boolean,
+	repeatCount: number,
 	highlightClassName?: string
 ): void {
 	/**
@@ -180,6 +186,11 @@ function formatNodeTriplet(
 	 * the current node where the user is adding the text
 	 * as well as the nodes before and after it.
 	 */
+
+	if (repeat && repeatCount > 6) {
+		return;
+	}
+
 	const { node: parentParagraph, offset: offsetInParent } = parentAndOffset;
 	const { active: node, start, end } = nodeTriplet;
 	const { node: startNode, offset: startOffset } = start;

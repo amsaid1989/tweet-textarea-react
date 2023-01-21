@@ -30,308 +30,321 @@ import textareaUtils from "./lib/textareaUtils";
 const STORAGE_KEY = "highlightPattern";
 
 const TweetTextarea = forwardRef<HTMLDivElement | null, ITweetTextareaProps>(
-    (
-        {
-            className,
-            highlightClassName,
-            placeholder,
-            value,
-            cursorPosition,
-            onTextUpdate,
-            onCursorChange,
-            ...htmlDivAttributes
-        }: ITweetTextareaProps,
-        ref: React.ForwardedRef<HTMLDivElement>
-    ): JSX.Element => {
-        const editorRef = useRef<HTMLDivElement | null>(null);
+	(
+		{
+			className,
+			highlightClassName,
+			placeholder,
+			value,
+			cursorPosition,
+			onTextUpdate,
+			onCursorChange,
+			...htmlDivAttributes
+		}: ITweetTextareaProps,
+		ref: React.ForwardedRef<HTMLDivElement>
+	): JSX.Element => {
+		const editorRef = useRef<HTMLDivElement | null>(null);
 
-        const [pattern, setPattern] = useState<RegExp | null>(null);
+		const [pattern, setPattern] = useState<RegExp | null>(null);
 
-        const [text, setText] = useState<string>("");
+		const [text, setText] = useState<string>("");
 
-        const [textCursorPosition, setTextCursorPosition] =
-            useState<ICurorChangeDetail>({ start: 0, end: 0 });
+		const [textCursorPosition, setTextCursorPosition] =
+			useState<ICurorChangeDetail>({ start: 0, end: 0 });
 
-        const [repositionCursor, setRepositionCursor] =
-            useState<boolean>(false);
+		const [repositionCursor, setRepositionCursor] = useState<boolean>(false);
 
-        // Get pattern from storage and run the get pattern function on load
-        useEffect(() => {
-            // TODO (Abdelrahman): Look into testing for the availability
-            // of localStorage before trying to use it.
-            const storage = window.localStorage;
-            const storedPattern = storage.getItem(STORAGE_KEY);
+		const [repeat, setRepeat] = useState<boolean>(false);
 
-            // Use the locally stored pattern if it exists while the
-            // componenet fetches the updated list of top-level
-            // domains
-            if (storedPattern && storedPattern.trim() !== "") {
-                setPattern(patterns.patternFromString(storedPattern));
-            }
+		const [repeatCount, setRepeatCount] = useState<number>(0);
 
-            patterns
-                .initPattern()
-                .then((highlightPattern) => {
-                    storage.setItem(STORAGE_KEY, highlightPattern.source);
+		// Get pattern from storage and run the get pattern function on load
+		useEffect(() => {
+			// TODO (Abdelrahman): Look into testing for the availability
+			// of localStorage before trying to use it.
+			const storage = window.localStorage;
+			const storedPattern = storage.getItem(STORAGE_KEY);
 
-                    setPattern(highlightPattern);
-                })
-                .catch((err) => console.error(err));
-        }, []);
+			// Use the locally stored pattern if it exists while the
+			// componenet fetches the updated list of top-level
+			// domains
+			if (storedPattern && storedPattern.trim() !== "") {
+				setPattern(patterns.patternFromString(storedPattern));
+			}
 
-        // Updated user defined ref whenever the internal ref updates
-        useEffect(() => {
-            if (ref) {
-                if (typeof ref === "function") {
-                    ref(editorRef.current);
-                } else {
-                    // Cast ref to a MutableRefObject, otherwise we won't
-                    // be able to update its 'current' property
-                    (
-                        ref as React.MutableRefObject<HTMLDivElement | null>
-                    ).current = editorRef.current;
-                }
-            }
-        }, [editorRef.current]);
+			patterns
+				.initPattern()
+				.then((highlightPattern) => {
+					storage.setItem(STORAGE_KEY, highlightPattern.source);
 
-        // Assign user's event listeners
-        useEffect(() => {
-            if (!editorRef.current) {
-                return;
-            }
+					setPattern(highlightPattern);
+				})
+				.catch((err) => console.error(err));
+		}, []);
 
-            if (onTextUpdate) {
-                editorRef.current.addEventListener(
-                    customEvents.textUpdateEvent,
-                    onTextUpdate as EventListener
-                );
-            }
+		// Updated user defined ref whenever the internal ref updates
+		useEffect(() => {
+			if (ref) {
+				if (typeof ref === "function") {
+					ref(editorRef.current);
+				} else {
+					// Cast ref to a MutableRefObject, otherwise we won't
+					// be able to update its 'current' property
+					(ref as React.MutableRefObject<HTMLDivElement | null>).current =
+						editorRef.current;
+				}
+			}
+		}, [editorRef.current]);
 
-            if (onCursorChange) {
-                editorRef.current.addEventListener(
-                    customEvents.cursorChangeEvent,
-                    onCursorChange as EventListener
-                );
-            }
+		// Assign user's event listeners
+		useEffect(() => {
+			if (!editorRef.current) {
+				return;
+			}
 
-            return () => {
-                if (!editorRef.current) {
-                    return;
-                }
+			if (onTextUpdate) {
+				editorRef.current.addEventListener(
+					customEvents.textUpdateEvent,
+					onTextUpdate as EventListener
+				);
+			}
 
-                if (onTextUpdate) {
-                    editorRef.current.removeEventListener(
-                        customEvents.textUpdateEvent,
-                        onTextUpdate as EventListener
-                    );
-                }
+			if (onCursorChange) {
+				editorRef.current.addEventListener(
+					customEvents.cursorChangeEvent,
+					onCursorChange as EventListener
+				);
+			}
 
-                if (onCursorChange) {
-                    editorRef.current.removeEventListener(
-                        customEvents.cursorChangeEvent,
-                        onCursorChange as EventListener
-                    );
-                }
-            };
-        }, [editorRef.current, onTextUpdate, onCursorChange]);
+			return () => {
+				if (!editorRef.current) {
+					return;
+				}
 
-        useEffect(() => {
-            if (!editorRef || !editorRef.current) {
-                return;
-            }
+				if (onTextUpdate) {
+					editorRef.current.removeEventListener(
+						customEvents.textUpdateEvent,
+						onTextUpdate as EventListener
+					);
+				}
 
-            if (text !== value && value !== undefined) {
-                setText(value);
-            }
-        }, [value]);
+				if (onCursorChange) {
+					editorRef.current.removeEventListener(
+						customEvents.cursorChangeEvent,
+						onCursorChange as EventListener
+					);
+				}
+			};
+		}, [editorRef.current, onTextUpdate, onCursorChange]);
 
-        useEffect(() => {
-            if (!editorRef || !editorRef.current) {
-                return;
-            }
+		useEffect(() => {
+			if (!editorRef || !editorRef.current) {
+				return;
+			}
 
-            const currentTextInEditor = textareaUtils.getCurrentText(
-                editorRef.current
-            );
+			if (text !== value && value !== undefined) {
+				setText(value);
+			}
+		}, [value]);
 
-            if (currentTextInEditor !== text) {
-                textareaUtils.deleteAllEditorChildren(editorRef.current);
+		useEffect(() => {
+			if (!editorRef || !editorRef.current) {
+				return;
+			}
 
-                if (text.length === 0) {
-                    editorRef.current.focus();
-                    return;
-                }
+			const currentTextInEditor = textareaUtils.getCurrentText(
+				editorRef.current
+			);
 
-                editorRef.current.focus();
+			if (currentTextInEditor !== text) {
+				textareaUtils.deleteAllEditorChildren(editorRef.current);
 
-                const sel = document.getSelection();
-                const range = sel?.getRangeAt(0);
+				if (text.length === 0) {
+					editorRef.current.focus();
+					return;
+				}
 
-                if (!range || !pattern) {
-                    return;
-                }
+				editorRef.current.focus();
 
-                textareaUtils.formatAfterUpdatingTextFromParent(
-                    editorRef.current,
-                    range,
-                    pattern,
-                    text,
-                    highlightClassName
-                );
+				const sel = document.getSelection();
+				const range = sel?.getRangeAt(0);
 
-                if (!cursorPosition) {
-                    return;
-                }
+				if (!range || !pattern) {
+					return;
+				}
 
-                setTextCursorPosition(cursorPosition);
-                setRepositionCursor(true);
-            }
-        }, [text]);
+				textareaUtils.formatAfterUpdatingTextFromParent(
+					editorRef.current,
+					range,
+					pattern,
+					text,
+					highlightClassName
+				);
 
-        useEffect(() => {
-            if (repositionCursor) {
-                setRepositionCursor(false);
+				if (!cursorPosition) {
+					return;
+				}
 
-                if (!editorRef.current) {
-                    return;
-                }
+				setTextCursorPosition(cursorPosition);
+				setRepositionCursor(true);
+			}
+		}, [text]);
 
-                textareaUtils.repositionCursorInTextarea(
-                    editorRef.current,
-                    textCursorPosition
-                );
-            }
-        }, [textCursorPosition, repositionCursor]);
+		useEffect(() => {
+			if (repositionCursor) {
+				setRepositionCursor(false);
 
-        /* EVENT LISTENERS */
-        const beforeInputListener = (
-            event: React.FormEvent<HTMLDivElement>
-        ) => {
-            if (!editorRef) {
-                return;
-            }
+				if (!editorRef.current) {
+					return;
+				}
 
-            textareaListeners.textareaBeforeInputListener(event, editorRef);
+				textareaUtils.repositionCursorInTextarea(
+					editorRef.current,
+					textCursorPosition
+				);
+			}
+		}, [textCursorPosition, repositionCursor]);
 
-            if (!editorRef.current) {
-                return;
-            }
+		/* EVENT LISTENERS */
+		const keyDownListener = (event: React.KeyboardEvent<HTMLDivElement>) => {
+			const handleRepeat =
+				event.repeat && event.key !== "Enter" && event.key !== "Backspace";
 
-            const currentText = textareaUtils.getCurrentText(editorRef.current);
-            setText(currentText);
+			setRepeat(handleRepeat);
 
-            if (!event.isDefaultPrevented()) {
-                return;
-            }
+			if (handleRepeat) {
+				setRepeatCount(repeatCount + 1);
+			} else {
+				setRepeatCount(0);
+			}
+		};
 
-            customEvents.dispatchTextUpdateEvent(editorRef.current, {
-                currentText,
-            });
-        };
+		const beforeInputListener = (event: React.FormEvent<HTMLDivElement>) => {
+			if (!editorRef) {
+				return;
+			}
 
-        const pasteListener = (event: React.ClipboardEvent<HTMLDivElement>) => {
-            if (!editorRef || !pattern) {
-                return;
-            }
+			textareaListeners.textareaBeforeInputListener(event, editorRef);
 
-            textareaListeners.textareaPasteListener(
-                event,
-                editorRef,
-                pattern,
-                highlightClassName
-            );
+			if (!editorRef.current) {
+				return;
+			}
 
-            if (!editorRef.current) {
-                return;
-            }
+			const currentText = textareaUtils.getCurrentText(editorRef.current);
+			setText(currentText);
 
-            const currentText = textareaUtils.getCurrentText(editorRef.current);
-            setText(currentText);
+			if (!event.isDefaultPrevented()) {
+				return;
+			}
 
-            if (!event.isDefaultPrevented()) {
-                return;
-            }
+			customEvents.dispatchTextUpdateEvent(editorRef.current, {
+				currentText,
+			});
+		};
 
-            customEvents.dispatchTextUpdateEvent(editorRef.current, {
-                currentText,
-            });
-        };
+		const pasteListener = (event: React.ClipboardEvent<HTMLDivElement>) => {
+			if (!editorRef || !pattern) {
+				return;
+			}
 
-        const inputListener = (event: React.FormEvent<HTMLDivElement>) => {
-            if (!editorRef || !pattern) {
-                return;
-            }
+			textareaListeners.textareaPasteListener(
+				event,
+				editorRef,
+				pattern,
+				highlightClassName
+			);
 
-            textareaListeners.textareaInputListener(
-                event,
-                editorRef,
-                pattern,
-                highlightClassName
-            );
+			if (!editorRef.current) {
+				return;
+			}
 
-            if (!editorRef.current) {
-                return;
-            }
+			const currentText = textareaUtils.getCurrentText(editorRef.current);
+			setText(currentText);
 
-            const currentText = textareaUtils.getCurrentText(editorRef.current);
-            setText(currentText);
+			if (!event.isDefaultPrevented()) {
+				return;
+			}
 
-            customEvents.dispatchTextUpdateEvent(editorRef.current, {
-                currentText,
-            });
-        };
+			customEvents.dispatchTextUpdateEvent(editorRef.current, {
+				currentText,
+			});
+		};
 
-        const cursorEventDispatch = () => {
-            if (!editorRef || !editorRef.current) {
-                return;
-            }
+		const inputListener = (event: React.FormEvent<HTMLDivElement>) => {
+			if (!editorRef || !pattern) {
+				return;
+			}
 
-            const sel = document.getSelection();
-            const range = sel?.getRangeAt(0);
+			textareaListeners.textareaInputListener(
+				event,
+				editorRef,
+				pattern,
+				repeat,
+				repeatCount,
+				highlightClassName
+			);
 
-            if (!range) {
-                return;
-            }
+			if (!editorRef.current) {
+				return;
+			}
 
-            const cursorPosition = textareaUtils.getCursorLocation(
-                editorRef.current,
-                range
-            );
+			const currentText = textareaUtils.getCurrentText(editorRef.current);
+			setText(currentText);
 
-            if (cursorPosition.start === null || cursorPosition.end === null) {
-                return;
-            }
+			customEvents.dispatchTextUpdateEvent(editorRef.current, {
+				currentText,
+			});
+		};
 
-            customEvents.dispatchCursorChangeEvent(
-                editorRef.current,
-                cursorPosition
-            );
-        };
-        /* END EVENT LISTENERS */
+		const cursorEventDispatch = () => {
+			if (!editorRef || !editorRef.current) {
+				return;
+			}
 
-        return (
-            <div
-                className={`tweet-textarea ${
-                    className || "tweet-textarea-general-style"
-                }`}
-            >
-                {text.length === 0 && placeholder && (
-                    <div className="placeholder">{placeholder}</div>
-                )}
-                <div
-                    {...htmlDivAttributes}
-                    ref={editorRef}
-                    className="input-area"
-                    onBeforeInput={beforeInputListener}
-                    onPaste={pasteListener}
-                    onInput={inputListener}
-                    onMouseUp={cursorEventDispatch}
-                    onKeyUp={cursorEventDispatch}
-                    contentEditable
-                />
-            </div>
-        );
-    }
+			const sel = document.getSelection();
+			const range = sel?.getRangeAt(0);
+
+			if (!range) {
+				return;
+			}
+
+			const cursorPosition = textareaUtils.getCursorLocation(
+				editorRef.current,
+				range
+			);
+
+			if (cursorPosition.start === null || cursorPosition.end === null) {
+				return;
+			}
+
+			customEvents.dispatchCursorChangeEvent(editorRef.current, cursorPosition);
+		};
+
+		/* END EVENT LISTENERS */
+
+		return (
+			<div
+				className={`tweet-textarea ${className || "tweet-textarea-general-style"
+					}`}
+			>
+				{text.length === 0 && placeholder && (
+					<div className="placeholder">{placeholder}</div>
+				)}
+				<div
+					{...htmlDivAttributes}
+					ref={editorRef}
+					className="input-area"
+					onKeyDown={keyDownListener}
+					onBeforeInput={beforeInputListener}
+					onPaste={pasteListener}
+					onInput={inputListener}
+					onKeyUp={cursorEventDispatch}
+					onMouseUp={cursorEventDispatch}
+					contentEditable
+				/>
+			</div>
+		);
+	}
 );
 
 export default TweetTextarea;

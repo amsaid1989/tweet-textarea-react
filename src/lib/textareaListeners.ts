@@ -339,6 +339,8 @@ function textareaInputListener(
 	event: React.FormEvent<HTMLDivElement>,
 	editorRef: React.MutableRefObject<HTMLDivElement | null>,
 	pattern: RegExp,
+	repeat: boolean,
+	repeatCount: number,
 	highlightClassName?: string
 ): void {
 	const inputType = (event.nativeEvent as InputEvent).inputType;
@@ -382,7 +384,13 @@ function textareaInputListener(
 		 */
 		textareaUtils.formatAfterNewParagraph(range, pattern, highlightClassName);
 	} else {
-		textareaUtils.formatAfterUserInput(range, pattern, highlightClassName);
+		textareaUtils.formatAfterUserInput(
+			range,
+			pattern,
+			repeat,
+			repeatCount,
+			highlightClassName
+		);
 	}
 
 	editorRef.current.normalize();
