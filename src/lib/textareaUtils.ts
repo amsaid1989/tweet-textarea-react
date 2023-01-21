@@ -27,6 +27,7 @@ import {
 	ICurorChangeDetail,
 	INullCurorChangeDetail,
 } from "./types";
+import { validSymbolsExistPattern } from "./patterns";
 
 function formatAfterUserInput(
 	range: Range,
@@ -280,7 +281,10 @@ function format(
 	 * text that hasn't been formatted yet.
 	 */
 
-	if (!textNode.textContent) {
+	if (
+		!textNode.textContent ||
+		!textNode.textContent.match(validSymbolsExistPattern)
+	) {
 		return;
 	}
 
