@@ -2,7 +2,7 @@
 
 ![GitHub](https://img.shields.io/github/license/amsaid1989/tweet-textarea-react) ![GitHub package.json version](https://img.shields.io/github/package-json/v/amsaid1989/tweet-textarea-react) ![GitHub contributors](https://img.shields.io/github/contributors/amsaid1989/tweet-textarea-react) ![GitHub last commit](https://img.shields.io/github/last-commit/amsaid1989/tweet-textarea-react)
 
-![Firefox](https://img.shields.io/badge/firefox-supported-success?logo=firefox) ![Chrome](https://img.shields.io/badge/chrome-supported-success?logo=google-chrome) ![Brave](https://img.shields.io/badge/brave-supported-success?logo=brave) ![Safari](https://img.shields.io/badge/safari-not tested-critical?logo=safari) ![iOS](https://img.shields.io/badge/ios-not tested-critical?logo=ios) ![android](https://img.shields.io/badge/android-not tested-critical?logo=android)
+![Firefox](https://img.shields.io/badge/firefox-supported-success?logo=firefox) ![Chrome](https://img.shields.io/badge/chrome-supported-success?logo=google-chrome) ![Brave](https://img.shields.io/badge/brave-supported-success?logo=brave) ![Safari](https://img.shields.io/badge/safari-not_tested-critical?logo=safari) ![iOS](https://img.shields.io/badge/ios-not_tested-critical?logo=ios) ![android](https://img.shields.io/badge/android-not_tested-critical?logo=android)
 
 ![GitHub watchers](https://img.shields.io/github/watchers/amsaid1989/tweet-textarea-react?style=social) ![GitHub Repo stars](https://img.shields.io/github/stars/amsaid1989/tweet-textarea-react?style=social) ![GitHub forks](https://img.shields.io/github/forks/amsaid1989/tweet-textarea-react?style=social)
 
