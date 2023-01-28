@@ -2,6 +2,8 @@
 
 ![GitHub](https://img.shields.io/github/license/amsaid1989/tweet-textarea-react) ![GitHub package.json version](https://img.shields.io/github/package-json/v/amsaid1989/tweet-textarea-react) ![GitHub contributors](https://img.shields.io/github/contributors/amsaid1989/tweet-textarea-react) ![GitHub last commit](https://img.shields.io/github/last-commit/amsaid1989/tweet-textarea-react)
 
+![Firefox](https://img.shields.io/badge/firefox-supported-success?logo=firefox) ![Chrome](https://img.shields.io/badge/chrome-supported-success?logo=google-chrome) ![Brave](https://img.shields.io/badge/brave-supported-success?logo=brave) ![Safari](https://img.shields.io/badge/safari-not tested-critical?logo=safari) ![iOS](https://img.shields.io/badge/ios-not tested-critical?logo=ios) ![android](https://img.shields.io/badge/android-not tested-critical?logo=android)
+
 ![GitHub watchers](https://img.shields.io/github/watchers/amsaid1989/tweet-textarea-react?style=social) ![GitHub Repo stars](https://img.shields.io/github/stars/amsaid1989/tweet-textarea-react?style=social) ![GitHub forks](https://img.shields.io/github/forks/amsaid1989/tweet-textarea-react?style=social)
 
 A simple React component that replicates the behaviour of Twitter's tweet input area. It detects and highlights URLs, hashtags, user mentions and cashtags.
@@ -28,17 +30,17 @@ Once installed, you can start using the component immediately, but first, you ne
 
 ```javascript
 // ES6
-import TweetTextarea from 'tweet-textarea-react'
+import TweetTextarea from "tweet-textarea-react";
 
 // CommonJS
-const TweetTextarea = require('tweet-textarea-react')
+const TweetTextarea = require("tweet-textarea-react");
 ```
 
 You can then render the component in your app:
 
 ```javascript
 function App() {
-    return <TweetTextarea />;
+  return <TweetTextarea />;
 }
 ```
 
@@ -48,7 +50,7 @@ The component comes with two sets of default styles applied. The first defines w
 
 ```javascript
 function App() {
-    return <TweetTextarea className="custom-class" />;
+  return <TweetTextarea className="custom-class" />;
 }
 ```
 
@@ -56,7 +58,7 @@ The second default style is the one that defines how URLs, hashtags, etc. will b
 
 ```javascript
 function App() {
-    return <TweetTextarea highlightClassName="custom-highlight" />;
+  return <TweetTextarea highlightClassName="custom-highlight" />;
 }
 ```
 
@@ -66,15 +68,18 @@ Here is a simple example of a parent component that passes all of those attribut
 
 ```typescript
 function App() {
-    const {tweetText, setTweetText} = useState<string>("");
-    const {textCursorPosition, setTextCursorPosition} = useState<ICursorChangeDetail>({start: 0, end: 0});
+  const { tweetText, setTweetText } = useState<string>("");
+  const { textCursorPosition, setTextCursorPosition } =
+    useState<ICursorChangeDetail>({ start: 0, end: 0 });
 
-    return <TweetTextarea 
-                value={tweetText}
-                cursorPosition={textCursorPosition}
-                onTextUpdate={handleTextUpdate}
-                onCursorChange={handleCursorPositionChange}
-           />;
+  return (
+    <TweetTextarea
+      value={tweetText}
+      cursorPosition={textCursorPosition}
+      onTextUpdate={handleTextUpdate}
+      onCursorChange={handleCursorPositionChange}
+    />
+  );
 }
 ```
 
@@ -188,10 +193,10 @@ This will build the component and automatically add it to the test app we create
 You then need to import the component into the test app and render it.
 
 ```javascript
-import TweetTextarea from 'tweet-textarea-react'
+import TweetTextarea from "tweet-textarea-react";
 
 function App() {
-    return <TweetTextarea />
+  return <TweetTextarea />;
 }
 ```
 
