@@ -384,90 +384,37 @@ function textareaInputListener(
 		 */
 
 		if (inputType === "insertLineBreak") {
-			// TODO (Abdelrahman): There is still a bug with the code where if there is
-			// a text like "Hello #100DaysOfCode from Abdelrahman" and the cursor is
-			// after "100" and user presses Shift+Enter, only the test "DaysOfCode"
-			// would be moved to the new line
-
-			let currentParagraph: Element | undefined;
 			let currentNode = range.startContainer;
 			let startOffset = range.startOffset;
-			let endOffset = currentNode.childNodes.length;
 
-			if (
-				currentNode.nodeType === 3 ||
-				(currentNode as Element).tagName === "SPAN"
-			) {
-				currentParagraph = currentNode.parentNode as Element;
-			}
+			const currentParagraph = textareaUtils.getParentParagraph(currentNode);
+			const endOffset = (currentParagraph as Element).childNodes.length;
 
-			if (
-				currentNode.nodeType === 3 &&
-				currentParagraph &&
-				currentParagraph.tagName === "P"
-			) {
-				/**
-				 * Handle how Google Chrome behaves differently from Firefox
-				 */
-				const offsetInParent = textareaUtils.findNodeInParent(
-					currentParagraph,
-					currentNode
-				);
+			if (currentParagraph) {
+				range.setStart(currentNode, startOffset);
+				range.setEnd(currentParagraph, endOffset);
 
-				if (offsetInParent !== undefined) {
-					currentNode = currentParagraph;
-					startOffset = offsetInParent;
-				}
-			} else if (
-				(currentNode as Element).tagName === "SPAN" ||
-				(currentNode.nodeType === 3 &&
-					currentParagraph &&
-					currentParagraph.tagName === "SPAN")
-			) {
-				if (currentParagraph && currentParagraph.tagName === "SPAN") {
-					/**
-					 * Handle how Google Chrome behaves differently from Firefox
-					 */
-					currentParagraph = currentParagraph.parentNode as Element;
+				const newParagraph = document.createElement("p");
+				newParagraph.appendChild(range.extractContents());
 
-					if (currentNode.textContent) {
-						endOffset = currentNode.textContent.length;
+				const parent = currentParagraph.parentNode;
+
+				if (parent) {
+					const offset = textareaUtils.findNodeInParent(
+						parent,
+						currentParagraph
+					);
+
+					if (offset !== undefined) {
+						range.setStart(parent, offset + 1);
+						range.setEnd(parent, offset + 1);
 					}
-				} else {
-					endOffset = currentNode.childNodes.length;
+
+					range.insertNode(newParagraph);
+
+					range.setStart(newParagraph, 0);
+					range.collapse(true);
 				}
-			}
-
-			if (!currentParagraph) {
-				currentParagraph = currentNode as HTMLParagraphElement;
-			}
-
-			range.setStart(currentNode, startOffset);
-			range.setEnd(currentNode, endOffset);
-
-			const newParagraph = document.createElement("p");
-			range.surroundContents(newParagraph);
-
-			if (currentNode.nodeType === 3) {
-				currentNode = currentNode.parentNode as Element;
-			}
-
-			currentNode.removeChild(newParagraph);
-
-			const parent = currentParagraph.parentNode;
-
-			if (parent) {
-				const offset = textareaUtils.findNodeInParent(parent, currentParagraph);
-
-				if (offset !== undefined) {
-					range.setStart(parent, offset + 1);
-					range.setEnd(parent, offset + 1);
-				}
-
-				range.insertNode(newParagraph);
-
-				range.setStart(newParagraph, 0);
-				range.collapse(true);
 			}
 		}
 
