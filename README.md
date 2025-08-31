@@ -10,6 +10,8 @@ A simple React component that replicates the behaviour of Twitter's tweet input 
 
 The component is built from scratch and it doesn't rely on any dependencies (except for React itself), so it is a relatively lightweight component.
 
+> Due to limited time, this component is no longer maintained. Please use at your own descretion.
+
 ## Installation
 
 You can install the component from npm using either `npm` or `yarn`:
